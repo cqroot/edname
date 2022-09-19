@@ -84,9 +84,9 @@ func runEditor(oldFile string, newFile string) {
 		editor = "vim"
 	}
 	vicmd := exec.Command(
-        editor,
-        "-c", fmt.Sprintf("command RenameDiff :vertical diffsplit %s", oldFile),
-        "-c", "nmap <C-p> :RenameDiff<CR>", newFile)
+		editor,
+		"-c", fmt.Sprintf("command RenameDiff :vertical diffsplit %s", oldFile),
+		"-c", "nmap <C-p> :RenameDiff<CR>", newFile)
 	vicmd.Stdin = os.Stdin
 	vicmd.Stdout = os.Stdout
 	err := vicmd.Run()
