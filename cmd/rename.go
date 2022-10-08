@@ -86,11 +86,11 @@ func runEditor(oldFile string, newFile string) {
 	var args []string = []string{
 		// "-c", fmt.Sprintf("command RenameDiff :vertical diffsplit %s", oldFile),
 		// "-c", "nmap <C-p> :RenameDiff<CR>",
-        // "-c", "RenameDiff",
-        "-d", oldFile, newFile,
-        "-c", "wincmd l",
-        "-c", "foldopen",
-        "-c", "autocmd BufEnter * if winnr(\"$\") == 1 | execute \"normal! :q!\\<CR>\" | endif",
+		// "-c", "RenameDiff",
+		"-d", oldFile, newFile,
+		"-c", "wincmd l",
+		"-c", "foldopen",
+		"-c", "autocmd BufEnter * if winnr(\"$\") == 1 | execute \"normal! :q!\\<CR>\" | endif",
 	}
 	vicmd := exec.Command(editor, args...)
 	vicmd.Stdin = os.Stdin
