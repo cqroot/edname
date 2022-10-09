@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/jedib0t/go-pretty/v6/table"
@@ -80,7 +81,7 @@ func removeTmpFiles(oldFile string, newFile string) {
 
 func runEditor(oldFile string, newFile string) {
 	var editor string = os.Getenv("EDITOR")
-	if editor == "" {
+	if editor == "" || !strings.Contains(editor, "vi") {
 		editor = "vim"
 	}
 
