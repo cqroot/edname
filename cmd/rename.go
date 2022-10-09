@@ -54,7 +54,7 @@ func createTmpFiles(currentPath string, oldFile string, newFile string) {
 	files, err := ioutil.ReadDir(currentPath)
 	internal.ExitIfError(err)
 
-	fOld, err := os.Create(oldFile)
+	fOld, err := os.OpenFile(oldFile, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0444)
 	internal.ExitIfError(err)
 	defer fOld.Close()
 
