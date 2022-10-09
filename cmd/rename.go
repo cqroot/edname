@@ -83,6 +83,16 @@ func runEditor(oldFile string, newFile string) {
 	if editor == "" {
 		editor = "vim"
 	}
+
+	var echoHelpArgs []string = []string{
+		"-c", "echom '[ Clibox Rename ]'",
+		"-c", "echom 'Modify the buffer on the right to rename.'",
+		"-c", "echom ' '",
+		"-c", "echom 'Notice:'",
+		"-c", "echom '1. Do not add or subtract lines.'",
+		"-c", "echom '2. Do not modify the buffer on the left.'",
+		"-c", "echom '3. Unchanged lines are ignored.'",
+	}
 	var args []string = []string{
 		// "-c", fmt.Sprintf("command RenameDiff :vertical diffsplit %s", oldFile),
 		// "-c", "nmap <C-p> :RenameDiff<CR>",
@@ -92,6 +102,8 @@ func runEditor(oldFile string, newFile string) {
 		"-c", "foldopen",
 		"-c", "autocmd BufEnter * if winnr(\"$\") == 1 | execute \"normal! :q!\\<CR>\" | endif",
 	}
+	args = append(args, echoHelpArgs...)
+
 	vicmd := exec.Command(editor, args...)
 	vicmd.Stdin = os.Stdin
 	vicmd.Stdout = os.Stdout
