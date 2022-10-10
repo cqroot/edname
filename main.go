@@ -1,7 +1,7 @@
 package main
 
 import (
-  "github.com/cqroot/clibox/cmd"
+  "github.com/cqroot/vinamer/cmd"
 )
 
 func main() {

@@ -1,4 +1,4 @@
-module github.com/cqroot/clibox
+module github.com/cqroot/vinamer
 
 go 1.19
 
