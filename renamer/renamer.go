@@ -64,9 +64,35 @@ func RunEditor(oldFile string, newFile string) {
 		"-c", "echom '3. Unchanged lines are ignored.'",
 	}
 	var args []string = []string{
-		// "-c", fmt.Sprintf("command RenameDiff :vertical diffsplit %s", oldFile),
-		// "-c", "nmap <C-p> :RenameDiff<CR>",
-		// "-c", "RenameDiff",
+        "-c", fmt.Sprintf("command RenameDiff :vertical diffsplit %s", oldFile),
+        "-c", "nmap <C-p> :RenameDiff<CR>",
+        newFile,
+	}
+	args = append(args, echoHelpArgs...)
+
+	vicmd := exec.Command(editor, args...)
+	vicmd.Stdin = os.Stdin
+	vicmd.Stdout = os.Stdout
+	err := vicmd.Run()
+	internal.ExitIfError(err)
+}
+
+func RunEditorDiff(oldFile string, newFile string) {
+	var editor string = os.Getenv("EDITOR")
+	if editor == "" || !strings.Contains(editor, "vi") {
+		editor = "vim"
+	}
+
+	var echoHelpArgs []string = []string{
+		"-c", "echom '[ ViNamer ]'",
+		"-c", "echom 'Modify the buffer on the right to rename.'",
+		"-c", "echom ' '",
+		"-c", "echom 'Notice:'",
+		"-c", "echom '1. Do not add or subtract lines.'",
+		"-c", "echom '2. Do not modify the buffer on the left.'",
+		"-c", "echom '3. Unchanged lines are ignored.'",
+	}
+	var args []string = []string{
 		"-d", oldFile, newFile,
 		"-c", "wincmd l",
 		"-c", "foldopen",
