@@ -1,14 +1,23 @@
+PROJ_NAME=vina
+
 .PHONY: build
 build:
-	go build -o vnamer     cmd/vnamer/main.go
-	go build -o vnamerdiff cmd/vnamerdiff/main.go
-
-.PHONY: install
-install: build
-	cp ./vnamer     $$GOPATH/bin/
-	cp ./vnamerdiff $$GOPATH/bin/
+	go build -o $(PROJ_NAME)      cmd/$(PROJ_NAME)/main.go
+	go build -o $(PROJ_NAME)diff  cmd/$(PROJ_NAME)diff/main.go
 
 .PHONY: clean
 clean:
-	rm -rf ./vnamer            ./vnamerdiff
-	rm -rf $$GOPATH/bin/vnamer $$GOPATH/bin/vnamerdiff
+	rm -f \
+		./$(PROJ_NAME) \
+		./$(PROJ_NAME)diff \
+
+.PHONY: install
+install: build
+	cp ./$(PROJ_NAME)      $${GOPATH}/bin/
+	cp ./$(PROJ_NAME)diff  $${GOPATH}/bin/
+
+.PHONY: uninstall
+uninstall:
+	rm -f \
+		$${GOPATH}/bin/$(PROJ_NAME) \
+		$${GOPATH}/bin/$(PROJ_NAME)diff

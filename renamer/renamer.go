@@ -12,7 +12,7 @@ import (
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/jedib0t/go-pretty/v6/text"
 
-	"github.com/cqroot/vinamer/internal"
+	"github.com/cqroot/vina/internal"
 )
 
 type RenamePair struct {
@@ -55,7 +55,7 @@ func RunEditor(oldFile string, newFile string) {
 	}
 
 	var echoHelpArgs []string = []string{
-		"-c", "echom '[ ViNamer ]'",
+		"-c", "echom '[ ViNa ]'",
 		"-c", "echom 'Modify the buffer on the right to rename.'",
 		"-c", "echom ' '",
 		"-c", "echom 'Notice:'",
@@ -84,7 +84,7 @@ func RunEditorDiff(oldFile string, newFile string) {
 	}
 
 	var echoHelpArgs []string = []string{
-		"-c", "echom '[ ViNamer ]'",
+		"-c", "echom '[ ViNa ]'",
 		"-c", "echom 'Modify the buffer on the right to rename.'",
 		"-c", "echom ' '",
 		"-c", "echom 'Notice:'",

@@ -1,4 +1,4 @@
-module github.com/cqroot/vinamer
+module github.com/cqroot/vina
 
 go 1.19
 

@@ -5,14 +5,14 @@ import (
 	"os"
 	"time"
 
-	"github.com/cqroot/vinamer/internal"
-	"github.com/cqroot/vinamer/renamer"
+	"github.com/cqroot/vina/internal"
+	"github.com/cqroot/vina/renamer"
 )
 
 func main() {
 	var opsId string = fmt.Sprintf("%d", time.Now().Unix())
-	var oldFile string = fmt.Sprintf("/tmp/vinamer-old-%s", opsId)
-	var newFile string = fmt.Sprintf("/tmp/vinamer-new-%s", opsId)
+	var oldFile string = fmt.Sprintf("/tmp/vina-old-%s", opsId)
+	var newFile string = fmt.Sprintf("/tmp/vina-new-%s", opsId)
 
 	currentPath, err := os.Getwd()
 	internal.ExitIfError(err)
