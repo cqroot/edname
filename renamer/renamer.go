@@ -20,7 +20,7 @@ type RenamePair struct {
 	NewName string
 }
 
-func CreateTmpFiles(currentPath string, oldFile string, newFile string) {
+func CreateTmpFiles(currentPath string, oldFile string, newFile string, dirMode bool) {
 	files, err := ioutil.ReadDir(currentPath)
 	internal.ExitIfError(err)
 
@@ -33,6 +33,12 @@ func CreateTmpFiles(currentPath string, oldFile string, newFile string) {
 	defer fNew.Close()
 
 	for _, f := range files {
+		if !dirMode {
+			if f.IsDir() {
+				continue
+			}
+		}
+
 		fOld.WriteString(f.Name())
 		fOld.WriteString("\n")
 
@@ -64,9 +70,9 @@ func RunEditor(oldFile string, newFile string) {
 		"-c", "echom '3. Unchanged lines are ignored.'",
 	}
 	var args []string = []string{
-        "-c", fmt.Sprintf("command RenameDiff :vertical diffsplit %s", oldFile),
-        "-c", "nmap <C-p> :RenameDiff<CR>",
-        newFile,
+		"-c", fmt.Sprintf("command RenameDiff :vertical diffsplit %s", oldFile),
+		"-c", "nmap <C-p> :RenameDiff<CR>",
+		newFile,
 	}
 	args = append(args, echoHelpArgs...)
 

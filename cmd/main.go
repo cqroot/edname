@@ -22,6 +22,12 @@ func main() {
 				Value:   false,
 				Usage:   "diff mode",
 			},
+			&cli.BoolFlag{
+				Name:    "directory",
+				Aliases: []string{"D"},
+				Value:   false,
+				Usage:   "include directory",
+			},
 		},
 		Action: runCmd,
 	}
@@ -37,7 +43,7 @@ func runCmd(cCtx *cli.Context) error {
 	currentPath, err := os.Getwd()
 	internal.ExitIfError(err)
 
-	renamer.CreateTmpFiles(currentPath, oldFile, newFile)
+	renamer.CreateTmpFiles(currentPath, oldFile, newFile, cCtx.Bool("directory"))
 	defer renamer.RemoveTmpFiles(oldFile, newFile)
 
 	if cCtx.Bool("diff") {
