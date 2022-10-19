@@ -70,7 +70,7 @@ func runCmd(cCtx *cli.Context) error {
 		renamer.RunEditor(oldFile, newFile, editor)
 	}
 
-	renamePairs := renamer.GenerateRenamePair(oldFile, newFile)
+	renamePairs := renamer.GenerateRenamePairs(oldFile, newFile)
 
 	renamer.StartRename(renamePairs, currentPath)
 
