@@ -19,6 +19,22 @@ type RenamePair struct {
 	NewName string
 }
 
+func PrintHelpMessage() {
+	fmt.Println("[ ViNa ]")
+	fmt.Println("Modify the buffer on the right to rename.")
+	fmt.Println(" ")
+	fmt.Println("Notice:")
+	fmt.Println("1. Do not add or subtract lines.")
+	fmt.Println("2. Do not modify the buffer on the left.")
+	fmt.Println("3. Unchanged lines are ignored.")
+
+	cfmReader := bufio.NewReader(os.Stdin)
+	_, err := cfmReader.ReadByte()
+	errutil.ExitIfError(err)
+
+	fmt.Println("Opening editor...")
+}
+
 func CreateTmpFiles(currentPath string, oldFile string, newFile string, dirMode bool) {
 	entries, err := os.ReadDir(currentPath)
 	errutil.ExitIfError(err)
@@ -62,21 +78,11 @@ func RunEditor(oldFile string, newFile string) {
 		editor = "vim"
 	}
 
-	var echoHelpArgs []string = []string{
-		"-c", "echom '[ ViNa ]'",
-		"-c", "echom 'Modify the buffer on the right to rename.'",
-		"-c", "echom ' '",
-		"-c", "echom 'Notice:'",
-		"-c", "echom '1. Do not add or subtract lines.'",
-		"-c", "echom '2. Do not modify the buffer on the left.'",
-		"-c", "echom '3. Unchanged lines are ignored.'",
-	}
 	var args []string = []string{
 		"-c", fmt.Sprintf("command RenameDiff :vertical diffsplit %s", oldFile),
 		"-c", "nmap <C-p> :RenameDiff<CR>",
 		newFile,
 	}
-	args = append(args, echoHelpArgs...)
 
 	vicmd := exec.Command(editor, args...)
 	vicmd.Stdin = os.Stdin
@@ -91,22 +97,12 @@ func RunEditorDiff(oldFile string, newFile string) {
 		editor = "vim"
 	}
 
-	var echoHelpArgs []string = []string{
-		"-c", "echom '[ ViNa ]'",
-		"-c", "echom 'Modify the buffer on the right to rename.'",
-		"-c", "echom ' '",
-		"-c", "echom 'Notice:'",
-		"-c", "echom '1. Do not add or subtract lines.'",
-		"-c", "echom '2. Do not modify the buffer on the left.'",
-		"-c", "echom '3. Unchanged lines are ignored.'",
-	}
 	var args []string = []string{
 		"-d", oldFile, newFile,
 		"-c", "wincmd l",
 		"-c", "foldopen",
 		"-c", "autocmd BufEnter * if winnr(\"$\") == 1 | execute \"normal! :q!\\<CR>\" | endif",
 	}
-	args = append(args, echoHelpArgs...)
 
 	vicmd := exec.Command(editor, args...)
 	vicmd.Stdin = os.Stdin

@@ -43,6 +43,8 @@ func runCmd(cCtx *cli.Context) error {
 	currentPath, err := os.Getwd()
 	errutil.ExitIfError(err)
 
+	renamer.PrintHelpMessage()
+
 	renamer.CreateTmpFiles(currentPath, oldFile, newFile, cCtx.Bool("directory"))
 	defer renamer.RemoveTmpFiles(oldFile, newFile)
 
