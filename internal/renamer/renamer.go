@@ -6,7 +6,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"strings"
 
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/jedib0t/go-pretty/v6/text"
@@ -74,26 +73,24 @@ func RemoveTmpFiles(oldFile string, newFile string) {
 
 func RunEditor(oldFile string, newFile string) {
 	var editor string = os.Getenv("EDITOR")
-	if editor == "" || !strings.Contains(editor, "vi") {
+	if editor == "" {
 		editor = "vim"
 	}
 
 	var args []string = []string{
-		"-c", fmt.Sprintf("command RenameDiff :vertical diffsplit %s", oldFile),
-		"-c", "nmap <C-p> :RenameDiff<CR>",
 		newFile,
 	}
 
-	vicmd := exec.Command(editor, args...)
-	vicmd.Stdin = os.Stdin
-	vicmd.Stdout = os.Stdout
-	err := vicmd.Run()
+	edcmd := exec.Command(editor, args...)
+	edcmd.Stdin = os.Stdin
+	edcmd.Stdout = os.Stdout
+	err := edcmd.Run()
 	errutil.ExitIfError(err)
 }
 
 func RunEditorDiff(oldFile string, newFile string) {
 	var editor string = os.Getenv("EDITOR")
-	if editor == "" || !strings.Contains(editor, "vi") {
+	if editor == "" {
 		editor = "vim"
 	}
 
@@ -104,10 +101,10 @@ func RunEditorDiff(oldFile string, newFile string) {
 		"-c", "autocmd BufEnter * if winnr(\"$\") == 1 | execute \"normal! :q!\\<CR>\" | endif",
 	}
 
-	vicmd := exec.Command(editor, args...)
-	vicmd.Stdin = os.Stdin
-	vicmd.Stdout = os.Stdout
-	err := vicmd.Run()
+	edcmd := exec.Command(editor, args...)
+	edcmd.Stdin = os.Stdin
+	edcmd.Stdout = os.Stdout
+	err := edcmd.Run()
 	errutil.ExitIfError(err)
 }
 

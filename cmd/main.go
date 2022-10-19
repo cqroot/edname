@@ -20,7 +20,7 @@ func main() {
 				Name:    "diff",
 				Aliases: []string{"d"},
 				Value:   false,
-				Usage:   "diff mode",
+				Usage:   "diff mode (only works when the editor is vim or neovim)",
 			},
 			&cli.BoolFlag{
 				Name:    "directory",
