@@ -17,6 +17,12 @@ func main() {
 		Usage: "An efficient batch renaming tool for vimer.",
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
+				Name:    "all",
+				Aliases: []string{"a"},
+				Value:   false,
+				Usage:   "do not ignore entries starting with .",
+			},
+			&cli.BoolFlag{
 				Name:    "diff",
 				Aliases: []string{"d"},
 				Value:   false,
@@ -50,7 +56,7 @@ func runCmd(cCtx *cli.Context) error {
 
 	renamer.PrintHelpMessage()
 
-	renamer.CreateTmpFiles(currentPath, oldFile, newFile, cCtx.Bool("directory"))
+	renamer.CreateTmpFiles(currentPath, oldFile, newFile, cCtx.Bool("directory"), cCtx.Bool("all"))
 	defer renamer.RemoveTmpFiles(oldFile, newFile)
 
 	var editor string = cCtx.String("editor")

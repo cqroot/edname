@@ -34,7 +34,7 @@ func PrintHelpMessage() {
 	fmt.Println("Opening editor...")
 }
 
-func CreateTmpFiles(currentPath string, oldFile string, newFile string, dirMode bool) {
+func CreateTmpFiles(currentPath string, oldFile string, newFile string, dirMode bool, all bool) {
 	entries, err := os.ReadDir(currentPath)
 	errutil.ExitIfError(err)
 
@@ -49,6 +49,10 @@ func CreateTmpFiles(currentPath string, oldFile string, newFile string, dirMode 
 	for _, entry := range entries {
 		info, err := entry.Info()
 		errutil.ExitIfError(err)
+
+		if !all && info.Name()[0] == '.' {
+			continue
+		}
 
 		if !dirMode {
 			if info.IsDir() {
