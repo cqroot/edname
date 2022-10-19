@@ -34,17 +34,9 @@ func PrintHelpMessage() {
 	fmt.Println("Opening editor...")
 }
 
-func CreateTmpFiles(currentPath string, oldFile string, newFile string, dirMode bool, all bool) {
-	entries, err := os.ReadDir(currentPath)
+func GenerateRenameItems(ch chan<- string, path string, dirMode bool, all bool) {
+	entries, err := os.ReadDir(path)
 	errutil.ExitIfError(err)
-
-	fOld, err := os.OpenFile(oldFile, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0444)
-	errutil.ExitIfError(err)
-	defer fOld.Close()
-
-	fNew, err := os.Create(newFile)
-	errutil.ExitIfError(err)
-	defer fNew.Close()
 
 	for _, entry := range entries {
 		info, err := entry.Info()
@@ -60,12 +52,32 @@ func CreateTmpFiles(currentPath string, oldFile string, newFile string, dirMode 
 			}
 		}
 
-		fOld.WriteString(info.Name())
+		ch <- info.Name()
+	}
+
+	close(ch)
+}
+
+func CreateTmpFiles(currentPath string, oldFile string, newFile string, dirMode bool, all bool) {
+	fOld, err := os.OpenFile(oldFile, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0444)
+	errutil.ExitIfError(err)
+	defer fOld.Close()
+
+	fNew, err := os.Create(newFile)
+	errutil.ExitIfError(err)
+	defer fNew.Close()
+
+	ch := make(chan string)
+	go GenerateRenameItems(ch, currentPath, dirMode, all)
+
+	for file := range ch {
+		fOld.WriteString(file)
 		fOld.WriteString("\n")
 
-		fNew.WriteString(info.Name())
+		fNew.WriteString(file)
 		fNew.WriteString("\n")
 	}
+
 	fOld.Sync()
 	fNew.Sync()
 }
@@ -102,7 +114,7 @@ func RunEditorDiff(oldFile string, newFile string, editor string) {
 	errutil.ExitIfError(err)
 }
 
-func GenerateRenamePair(oldFile string, newFile string) []RenamePair {
+func GenerateRenamePairs(oldFile string, newFile string) []RenamePair {
 	fOld, err := os.Open(oldFile)
 	errutil.ExitIfError(err)
 	oldScanner := bufio.NewScanner(fOld)
