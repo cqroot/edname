@@ -3,7 +3,6 @@ package renamer
 import (
 	"bufio"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -21,7 +20,7 @@ type RenamePair struct {
 }
 
 func CreateTmpFiles(currentPath string, oldFile string, newFile string, dirMode bool) {
-	files, err := ioutil.ReadDir(currentPath)
+	entries, err := os.ReadDir(currentPath)
 	internal.ExitIfError(err)
 
 	fOld, err := os.OpenFile(oldFile, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0444)
@@ -32,17 +31,20 @@ func CreateTmpFiles(currentPath string, oldFile string, newFile string, dirMode 
 	internal.ExitIfError(err)
 	defer fNew.Close()
 
-	for _, f := range files {
+	for _, entry := range entries {
+		info, err := entry.Info()
+		internal.ExitIfError(err)
+
 		if !dirMode {
-			if f.IsDir() {
+			if info.IsDir() {
 				continue
 			}
 		}
 
-		fOld.WriteString(f.Name())
+		fOld.WriteString(info.Name())
 		fOld.WriteString("\n")
 
-		fNew.WriteString(f.Name())
+		fNew.WriteString(info.Name())
 		fNew.WriteString("\n")
 	}
 	fOld.Sync()
