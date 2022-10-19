@@ -28,6 +28,11 @@ func main() {
 				Value:   false,
 				Usage:   "include directory",
 			},
+			&cli.StringFlag{
+				Name:    "editor",
+				Aliases: []string{"e"},
+				Value:   "$EDITOR",
+			},
 		},
 		Action: runCmd,
 	}
@@ -48,10 +53,15 @@ func runCmd(cCtx *cli.Context) error {
 	renamer.CreateTmpFiles(currentPath, oldFile, newFile, cCtx.Bool("directory"))
 	defer renamer.RemoveTmpFiles(oldFile, newFile)
 
+	var editor string = cCtx.String("editor")
+	if editor == "$EDITOR" {
+		editor = os.Getenv("EDITOR")
+	}
+
 	if cCtx.Bool("diff") {
-		renamer.RunEditorDiff(oldFile, newFile)
+		renamer.RunEditorDiff(oldFile, newFile, editor)
 	} else {
-		renamer.RunEditor(oldFile, newFile)
+		renamer.RunEditor(oldFile, newFile, editor)
 	}
 
 	renamePairs := renamer.GenerateRenamePair(oldFile, newFile)

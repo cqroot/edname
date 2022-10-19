@@ -71,12 +71,7 @@ func RemoveTmpFiles(oldFile string, newFile string) {
 	os.Remove(newFile)
 }
 
-func RunEditor(oldFile string, newFile string) {
-	var editor string = os.Getenv("EDITOR")
-	if editor == "" {
-		editor = "vim"
-	}
-
+func RunEditor(oldFile string, newFile string, editor string) {
 	var args []string = []string{
 		newFile,
 	}
@@ -88,12 +83,7 @@ func RunEditor(oldFile string, newFile string) {
 	errutil.ExitIfError(err)
 }
 
-func RunEditorDiff(oldFile string, newFile string) {
-	var editor string = os.Getenv("EDITOR")
-	if editor == "" {
-		editor = "vim"
-	}
-
+func RunEditorDiff(oldFile string, newFile string, editor string) {
 	var args []string = []string{
 		"-d", oldFile, newFile,
 		"-c", "wincmd l",
