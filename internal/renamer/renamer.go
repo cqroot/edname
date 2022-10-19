@@ -11,7 +11,7 @@ import (
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/jedib0t/go-pretty/v6/text"
 
-	"github.com/cqroot/vina/internal"
+	"github.com/cqroot/vina/internal/errutil"
 )
 
 type RenamePair struct {
@@ -21,19 +21,19 @@ type RenamePair struct {
 
 func CreateTmpFiles(currentPath string, oldFile string, newFile string, dirMode bool) {
 	entries, err := os.ReadDir(currentPath)
-	internal.ExitIfError(err)
+	errutil.ExitIfError(err)
 
 	fOld, err := os.OpenFile(oldFile, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0444)
-	internal.ExitIfError(err)
+	errutil.ExitIfError(err)
 	defer fOld.Close()
 
 	fNew, err := os.Create(newFile)
-	internal.ExitIfError(err)
+	errutil.ExitIfError(err)
 	defer fNew.Close()
 
 	for _, entry := range entries {
 		info, err := entry.Info()
-		internal.ExitIfError(err)
+		errutil.ExitIfError(err)
 
 		if !dirMode {
 			if info.IsDir() {
@@ -82,7 +82,7 @@ func RunEditor(oldFile string, newFile string) {
 	vicmd.Stdin = os.Stdin
 	vicmd.Stdout = os.Stdout
 	err := vicmd.Run()
-	internal.ExitIfError(err)
+	errutil.ExitIfError(err)
 }
 
 func RunEditorDiff(oldFile string, newFile string) {
@@ -112,17 +112,17 @@ func RunEditorDiff(oldFile string, newFile string) {
 	vicmd.Stdin = os.Stdin
 	vicmd.Stdout = os.Stdout
 	err := vicmd.Run()
-	internal.ExitIfError(err)
+	errutil.ExitIfError(err)
 }
 
 func GenerateRenamePair(oldFile string, newFile string) []RenamePair {
 	fOld, err := os.Open(oldFile)
-	internal.ExitIfError(err)
+	errutil.ExitIfError(err)
 	oldScanner := bufio.NewScanner(fOld)
 	oldScanner.Split(bufio.ScanLines)
 
 	fNew, err := os.Open(newFile)
-	internal.ExitIfError(err)
+	errutil.ExitIfError(err)
 	newScanner := bufio.NewScanner(fNew)
 	newScanner.Split(bufio.ScanLines)
 
@@ -159,7 +159,7 @@ func StartRename(renamePairs []RenamePair, currentPath string) {
 	fmt.Print("Confirm to rename the above file [y/N] ")
 	cfmReader := bufio.NewReader(os.Stdin)
 	cfmText, err := cfmReader.ReadString('\n')
-	internal.ExitIfError(err)
+	errutil.ExitIfError(err)
 
 	if cfmText != "y\n" && cfmText != "Y\n" {
 		return
@@ -177,6 +177,6 @@ func StartRename(renamePairs []RenamePair, currentPath string) {
 			filepath.Join(currentPath, pair.OldName),
 			filepath.Join(currentPath, pair.NewName),
 		)
-		internal.ExitIfError(err)
+		errutil.ExitIfError(err)
 	}
 }

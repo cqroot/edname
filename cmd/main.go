@@ -7,8 +7,8 @@ import (
 
 	"github.com/urfave/cli/v2"
 
-	"github.com/cqroot/vina/internal"
-	"github.com/cqroot/vina/renamer"
+	"github.com/cqroot/vina/internal/errutil"
+	"github.com/cqroot/vina/internal/renamer"
 )
 
 func main() {
@@ -32,7 +32,7 @@ func main() {
 		Action: runCmd,
 	}
 
-	internal.ExitIfError(app.Run(os.Args))
+	errutil.ExitIfError(app.Run(os.Args))
 }
 
 func runCmd(cCtx *cli.Context) error {
@@ -41,7 +41,7 @@ func runCmd(cCtx *cli.Context) error {
 	var newFile string = fmt.Sprintf("/tmp/vina-new-%s", opsId)
 
 	currentPath, err := os.Getwd()
-	internal.ExitIfError(err)
+	errutil.ExitIfError(err)
 
 	renamer.CreateTmpFiles(currentPath, oldFile, newFile, cCtx.Bool("directory"))
 	defer renamer.RemoveTmpFiles(oldFile, newFile)
