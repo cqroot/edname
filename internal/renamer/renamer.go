@@ -18,35 +18,29 @@ type RenamePair struct {
 	NewName string
 }
 
-func PrintHelpMessage() {
-	fmt.Println("[ ViNa ]")
-	fmt.Println("Modify the buffer on the right to rename.")
-	fmt.Println(" ")
-	fmt.Println("Notice:")
-	fmt.Println("1. Do not add or subtract lines.")
-	fmt.Println("2. Do not modify the buffer on the left.")
-	fmt.Println("3. Unchanged lines are ignored.")
+type Renamer struct {
+	OldFile string
+	NewFile string
 
-	cfmReader := bufio.NewReader(os.Stdin)
-	_, err := cfmReader.ReadByte()
-	errutil.ExitIfError(err)
+	Path string
 
-	fmt.Println("Opening editor...")
+	DirOpt bool
+	AllOpt bool
 }
 
-func GenerateRenameItems(ch chan<- string, path string, dirMode bool, all bool) {
-	entries, err := os.ReadDir(path)
+func (r Renamer) GenerateRenameItems(ch chan<- string) {
+	entries, err := os.ReadDir(r.Path)
 	errutil.ExitIfError(err)
 
 	for _, entry := range entries {
 		info, err := entry.Info()
 		errutil.ExitIfError(err)
 
-		if !all && info.Name()[0] == '.' {
+		if !r.AllOpt && info.Name()[0] == '.' {
 			continue
 		}
 
-		if !dirMode {
+		if !r.DirOpt {
 			if info.IsDir() {
 				continue
 			}
@@ -58,38 +52,42 @@ func GenerateRenameItems(ch chan<- string, path string, dirMode bool, all bool) 
 	close(ch)
 }
 
-func CreateTmpFiles(currentPath string, oldFile string, newFile string, dirMode bool, all bool) {
-	fOld, err := os.OpenFile(oldFile, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0444)
+func (r Renamer) CreateTmpFiles() {
+	fOld, err := os.OpenFile(r.OldFile, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0444)
 	errutil.ExitIfError(err)
 	defer fOld.Close()
 
-	fNew, err := os.Create(newFile)
+	fNew, err := os.Create(r.NewFile)
 	errutil.ExitIfError(err)
 	defer fNew.Close()
 
-	ch := make(chan string)
-	go GenerateRenameItems(ch, currentPath, dirMode, all)
+	chItems := make(chan string)
+	go r.GenerateRenameItems(chItems)
 
-	for file := range ch {
-		fOld.WriteString(file)
-		fOld.WriteString("\n")
+	for file := range chItems {
+		_, err = fOld.WriteString(file)
+		errutil.PrintIfError(err)
+		_, err = fOld.WriteString("\n")
+		errutil.PrintIfError(err)
 
-		fNew.WriteString(file)
-		fNew.WriteString("\n")
+		_, err = fNew.WriteString(file)
+		errutil.PrintIfError(err)
+		_, err = fNew.WriteString("\n")
+		errutil.PrintIfError(err)
 	}
 
-	fOld.Sync()
-	fNew.Sync()
+	errutil.PrintIfError(fOld.Sync())
+	errutil.PrintIfError(fNew.Sync())
 }
 
-func RemoveTmpFiles(oldFile string, newFile string) {
-	os.Remove(oldFile)
-	os.Remove(newFile)
+func (r Renamer) RemoveTmpFiles() {
+	errutil.PrintIfError(os.Remove(r.OldFile))
+	errutil.PrintIfError(os.Remove(r.NewFile))
 }
 
-func RunEditor(oldFile string, newFile string, editor string) {
+func (r Renamer) RunEditor(editor string) {
 	var args []string = []string{
-		newFile,
+		r.NewFile,
 	}
 
 	edcmd := exec.Command(editor, args...)
@@ -99,9 +97,9 @@ func RunEditor(oldFile string, newFile string, editor string) {
 	errutil.ExitIfError(err)
 }
 
-func RunEditorDiff(oldFile string, newFile string, editor string) {
+func (r Renamer) RunEditorDiff(editor string) {
 	var args []string = []string{
-		"-d", oldFile, newFile,
+		"-d", r.OldFile, r.NewFile,
 		"-c", "wincmd l",
 		"-c", "foldopen",
 		"-c", "autocmd BufEnter * if winnr(\"$\") == 1 | execute \"normal! :q!\\<CR>\" | endif",
@@ -114,13 +112,13 @@ func RunEditorDiff(oldFile string, newFile string, editor string) {
 	errutil.ExitIfError(err)
 }
 
-func GenerateRenamePairs(oldFile string, newFile string) []RenamePair {
-	fOld, err := os.Open(oldFile)
+func (r Renamer) GenerateRenamePairs() []RenamePair {
+	fOld, err := os.Open(r.OldFile)
 	errutil.ExitIfError(err)
 	oldScanner := bufio.NewScanner(fOld)
 	oldScanner.Split(bufio.ScanLines)
 
-	fNew, err := os.Open(newFile)
+	fNew, err := os.Open(r.NewFile)
 	errutil.ExitIfError(err)
 	newScanner := bufio.NewScanner(fNew)
 	newScanner.Split(bufio.ScanLines)
@@ -142,7 +140,7 @@ func GenerateRenamePairs(oldFile string, newFile string) []RenamePair {
 	return renamePairs
 }
 
-func StartRename(renamePairs []RenamePair, currentPath string) {
+func (r Renamer) StartRename(renamePairs []RenamePair) {
 	if len(renamePairs) == 0 {
 		return
 	}
@@ -173,8 +171,8 @@ func StartRename(renamePairs []RenamePair, currentPath string) {
 			pair.NewName,
 		)
 		err := os.Rename(
-			filepath.Join(currentPath, pair.OldName),
-			filepath.Join(currentPath, pair.NewName),
+			filepath.Join(r.Path, pair.OldName),
+			filepath.Join(r.Path, pair.NewName),
 		)
 		errutil.ExitIfError(err)
 	}

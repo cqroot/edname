@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"time"
@@ -46,6 +47,22 @@ func main() {
 	errutil.ExitIfError(app.Run(os.Args))
 }
 
+func PrintHelpMessage() {
+	fmt.Println(`[ ViNa ]
+Modify the buffer on the right to rename.
+ 
+Notice:
+1. Do not add or subtract lines.
+2. Do not modify the buffer on the left.
+3. Unchanged lines are ignored.`)
+
+	cfmReader := bufio.NewReader(os.Stdin)
+	_, err := cfmReader.ReadByte()
+	errutil.ExitIfError(err)
+
+	fmt.Println("Opening editor...")
+}
+
 func runCmd(cCtx *cli.Context) error {
 	var opsId string = fmt.Sprintf("%d", time.Now().Unix())
 	var oldFile string = fmt.Sprintf("/tmp/vina-old-%s", opsId)
@@ -54,10 +71,18 @@ func runCmd(cCtx *cli.Context) error {
 	currentPath, err := os.Getwd()
 	errutil.ExitIfError(err)
 
-	renamer.PrintHelpMessage()
+	PrintHelpMessage()
 
-	renamer.CreateTmpFiles(currentPath, oldFile, newFile, cCtx.Bool("directory"), cCtx.Bool("all"))
-	defer renamer.RemoveTmpFiles(oldFile, newFile)
+	r := renamer.Renamer{
+		NewFile: newFile,
+		OldFile: oldFile,
+		Path:    currentPath,
+		DirOpt:  cCtx.Bool("directory"),
+		AllOpt:  cCtx.Bool("all"),
+	}
+
+	r.CreateTmpFiles()
+	defer r.RemoveTmpFiles()
 
 	var editor string = cCtx.String("editor")
 	if editor == "$EDITOR" {
@@ -65,14 +90,14 @@ func runCmd(cCtx *cli.Context) error {
 	}
 
 	if cCtx.Bool("diff") {
-		renamer.RunEditorDiff(oldFile, newFile, editor)
+		r.RunEditorDiff(editor)
 	} else {
-		renamer.RunEditor(oldFile, newFile, editor)
+		r.RunEditor(editor)
 	}
 
-	renamePairs := renamer.GenerateRenamePairs(oldFile, newFile)
+	renamePairs := r.GenerateRenamePairs()
 
-	renamer.StartRename(renamePairs, currentPath)
+	r.StartRename(renamePairs)
 
 	return nil
 }
