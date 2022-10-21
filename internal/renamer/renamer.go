@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"time"
 
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/jedib0t/go-pretty/v6/text"
@@ -26,6 +27,20 @@ type Renamer struct {
 
 	DirOpt bool
 	AllOpt bool
+}
+
+func New(path string, dirOpt bool, allOpt bool) *Renamer {
+	var opsId string = fmt.Sprintf("%d", time.Now().Unix())
+	var oldFile string = fmt.Sprintf("/tmp/vina-old-%s", opsId)
+	var newFile string = fmt.Sprintf("/tmp/vina-new-%s", opsId)
+
+	return &Renamer{
+		NewFile: newFile,
+		OldFile: oldFile,
+		Path:    path,
+		DirOpt:  dirOpt,
+		AllOpt:  allOpt,
+	}
 }
 
 func (r Renamer) GenerateRenameItems(ch chan<- string) {

@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"time"
 
 	"github.com/urfave/cli/v2"
 
@@ -64,22 +63,12 @@ Notice:
 }
 
 func runCmd(cCtx *cli.Context) error {
-	var opsId string = fmt.Sprintf("%d", time.Now().Unix())
-	var oldFile string = fmt.Sprintf("/tmp/vina-old-%s", opsId)
-	var newFile string = fmt.Sprintf("/tmp/vina-new-%s", opsId)
-
 	currentPath, err := os.Getwd()
 	errutil.ExitIfError(err)
 
 	PrintHelpMessage()
 
-	r := renamer.Renamer{
-		NewFile: newFile,
-		OldFile: oldFile,
-		Path:    currentPath,
-		DirOpt:  cCtx.Bool("directory"),
-		AllOpt:  cCtx.Bool("all"),
-	}
+	r := renamer.New(currentPath, cCtx.Bool("directory"), cCtx.Bool("all"))
 
 	r.CreateTmpFiles()
 	defer r.RemoveTmpFiles()
