@@ -34,6 +34,11 @@ func main() {
 				Value:   false,
 				Usage:   "include directory",
 			},
+			&cli.BoolFlag{
+				Name:  "directory-only",
+				Value: false,
+				Usage: "rename directory only",
+			},
 			&cli.StringFlag{
 				Name:    "editor",
 				Aliases: []string{"e"},
@@ -68,7 +73,12 @@ func runCmd(cCtx *cli.Context) error {
 
 	PrintHelpMessage()
 
-	r := renamer.New(currentPath, cCtx.Bool("directory"), cCtx.Bool("all"))
+	r := renamer.New(
+		currentPath,
+		cCtx.Bool("directory"),
+		cCtx.Bool("directory-only"),
+		cCtx.Bool("all"),
+	)
 
 	r.CreateTmpFiles()
 	defer r.RemoveTmpFiles()

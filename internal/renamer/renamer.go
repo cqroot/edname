@@ -25,21 +25,23 @@ type Renamer struct {
 
 	Path string
 
-	DirOpt bool
-	AllOpt bool
+	DirOpt     bool
+	DirOnlyOpt bool
+	AllOpt     bool
 }
 
-func New(path string, dirOpt bool, allOpt bool) *Renamer {
+func New(path string, dirOpt bool, dirOnlyOpt bool, allOpt bool) *Renamer {
 	var opsId string = fmt.Sprintf("%d", time.Now().Unix())
 	var oldFile string = fmt.Sprintf("/tmp/vina-old-%s", opsId)
 	var newFile string = fmt.Sprintf("/tmp/vina-new-%s", opsId)
 
 	return &Renamer{
-		NewFile: newFile,
-		OldFile: oldFile,
-		Path:    path,
-		DirOpt:  dirOpt,
-		AllOpt:  allOpt,
+		NewFile:    newFile,
+		OldFile:    oldFile,
+		Path:       path,
+		DirOpt:     dirOpt,
+		DirOnlyOpt: dirOnlyOpt,
+		AllOpt:     allOpt,
 	}
 }
 
@@ -55,7 +57,11 @@ func (r Renamer) GenerateRenameItems(ch chan<- string) {
 			continue
 		}
 
-		if !r.DirOpt {
+		if r.DirOnlyOpt {
+			if !info.IsDir() {
+				continue
+			}
+		} else if !r.DirOpt {
 			if info.IsDir() {
 				continue
 			}
