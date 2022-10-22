@@ -15,3 +15,11 @@ install: build
 .PHONY: uninstall
 uninstall:
 	rm -f $${GOPATH}/bin/$(PROJ_NAME)
+
+.PHONY: gen-testdata
+gen-testdata:
+	sh "$(CURDIR)/scripts/gen-testdata.sh"
+
+.PHONY: test
+test:
+	go test -v ./...
