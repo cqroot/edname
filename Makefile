@@ -1,16 +1,21 @@
 PROJ_NAME=vina
+BUILD_DIR=$(CURDIR)/.build
 
 .PHONY: build
 build:
-	go build -o $(PROJ_NAME)      cmd/main.go
+	go build -o "$(BUILD_DIR)/$(PROJ_NAME)" cmd/main.go
+
+.PHONY: run
+run: build
+	"$(BUILD_DIR)/$(PROJ_NAME)"
 
 .PHONY: clean
 clean:
-	rm -f ./$(PROJ_NAME)
+	rm -f "$(BUILD_DIR)"
 
 .PHONY: install
 install: build
-	cp ./$(PROJ_NAME) $${GOPATH}/bin/
+	cp "$(BUILD_DIR)/$(PROJ_NAME)" $${GOPATH}/bin/
 
 .PHONY: uninstall
 uninstall:
