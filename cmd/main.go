@@ -1,8 +1,6 @@
 package main
 
 import (
-	"bufio"
-	"fmt"
 	"os"
 
 	"github.com/urfave/cli/v2"
@@ -13,8 +11,14 @@ import (
 
 func main() {
 	app := &cli.App{
-		Name:  "vina",
-		Usage: "An efficient batch renaming tool for vimer.",
+		Name: "vina",
+		Usage: `Use your favorite editor to batch rename files and directories.
+
+Originally designed for vim, but not just vim.
+
+Notice:
+1. Do not add or subtract lines.
+2. Unchanged lines are ignored.`,
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:    "all",
@@ -51,27 +55,9 @@ func main() {
 	errutil.ExitIfError(app.Run(os.Args))
 }
 
-func PrintHelpMessage() {
-	fmt.Println(`[ ViNa ]
-Modify the buffer on the right to rename.
- 
-Notice:
-1. Do not add or subtract lines.
-2. Do not modify the buffer on the left.
-3. Unchanged lines are ignored.`)
-
-	cfmReader := bufio.NewReader(os.Stdin)
-	_, err := cfmReader.ReadByte()
-	errutil.ExitIfError(err)
-
-	fmt.Println("Opening editor...")
-}
-
 func runCmd(cCtx *cli.Context) error {
 	currentPath, err := os.Getwd()
 	errutil.ExitIfError(err)
-
-	PrintHelpMessage()
 
 	r := renamer.New(
 		currentPath,
