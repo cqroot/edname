@@ -1,5 +1,7 @@
 github.com/cpuguy83/go-md2man/v2 v2.0.2 h1:p1EgwI/C7NhT0JmVkwCD2ZBK8j4aeHQX2pMHHBfMQ6w=
 github.com/cpuguy83/go-md2man/v2 v2.0.2/go.mod h1:tgQtvFlXSQOSOSIRvRPT7W67SCa46tRHOmNcaadrF8o=
+github.com/cqroot/goutil v0.0.0-20221028034852-ad3308f03336 h1:bh73fFGCeMCPfBEmwAVMC3vVUhJ4k31ZbyeCaKBsj90=
+github.com/cqroot/goutil v0.0.0-20221028034852-ad3308f03336/go.mod h1:hlQxggQDtH1AhggTgnHxxgdnoi2JQUft+0QkjQqITQk=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

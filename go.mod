@@ -3,6 +3,7 @@ module github.com/cqroot/vina
 go 1.19
 
 require (
+	github.com/cqroot/goutil v0.0.0-20221028034852-ad3308f03336
 	github.com/jedib0t/go-pretty/v6 v6.4.0
 	github.com/stretchr/testify v1.7.4
 	github.com/urfave/cli/v2 v2.20.2

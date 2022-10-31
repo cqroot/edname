@@ -5,7 +5,7 @@ import (
 
 	"github.com/urfave/cli/v2"
 
-	"github.com/cqroot/vina/internal/errutil"
+	"github.com/cqroot/goutil/errutil"
 	"github.com/cqroot/vina/internal/renamer"
 )
 

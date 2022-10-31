@@ -10,8 +10,7 @@ import (
 
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/jedib0t/go-pretty/v6/text"
-
-	"github.com/cqroot/vina/internal/errutil"
+	"github.com/cqroot/goutil/errutil"
 )
 
 type RenamePair struct {
@@ -87,23 +86,23 @@ func (r Renamer) CreateTmpFiles() {
 
 	for file := range chItems {
 		_, err = fOld.WriteString(file)
-		errutil.PrintIfError(err)
+		errutil.LogIfError(err)
 		_, err = fOld.WriteString("\n")
-		errutil.PrintIfError(err)
+		errutil.LogIfError(err)
 
 		_, err = fNew.WriteString(file)
-		errutil.PrintIfError(err)
+		errutil.LogIfError(err)
 		_, err = fNew.WriteString("\n")
-		errutil.PrintIfError(err)
+		errutil.LogIfError(err)
 	}
 
-	errutil.PrintIfError(fOld.Sync())
-	errutil.PrintIfError(fNew.Sync())
+	errutil.LogIfError(fOld.Sync())
+	errutil.LogIfError(fNew.Sync())
 }
 
 func (r Renamer) RemoveTmpFiles() {
-	errutil.PrintIfError(os.Remove(r.OldFile))
-	errutil.PrintIfError(os.Remove(r.NewFile))
+	errutil.LogIfError(os.Remove(r.OldFile))
+	errutil.LogIfError(os.Remove(r.NewFile))
 }
 
 func (r Renamer) RunEditor(editor string) {
@@ -115,7 +114,7 @@ func (r Renamer) RunEditor(editor string) {
 	edcmd.Stdin = os.Stdin
 	edcmd.Stdout = os.Stdout
 	err := edcmd.Run()
-	errutil.ExitIfError(err)
+	errutil.LogIfError(err)
 }
 
 func (r Renamer) RunEditorDiff(editor string) {
