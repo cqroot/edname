@@ -2,10 +2,11 @@ package main
 
 import (
 	"os"
-
-	"github.com/urfave/cli/v2"
+	"path"
 
 	"github.com/cqroot/goutil/errutil"
+	"github.com/urfave/cli/v2"
+
 	"github.com/cqroot/vina/internal/renamer"
 )
 
@@ -27,26 +28,31 @@ Notice:
 				Usage:   "do not ignore entries starting with .",
 			},
 			&cli.BoolFlag{
-				Name:    "diff",
-				Aliases: []string{"d"},
-				Value:   false,
-				Usage:   "diff mode (only works when the editor is vim or neovim)",
+				Name:  "diff",
+				Value: false,
+				Usage: "diff mode (only works when the editor is vim-like editor)",
 			},
 			&cli.BoolFlag{
 				Name:    "directory",
-				Aliases: []string{"D"},
+				Aliases: []string{"d"},
 				Value:   false,
 				Usage:   "include directory",
 			},
 			&cli.BoolFlag{
-				Name:  "directory-only",
-				Value: false,
-				Usage: "rename directory only",
+				Name:    "directory-only",
+				Aliases: []string{"D"},
+				Value:   false,
+				Usage:   "rename directory only",
 			},
 			&cli.StringFlag{
 				Name:    "editor",
 				Aliases: []string{"e"},
 				Value:   "$EDITOR",
+			},
+			&cli.PathFlag{
+				Name:    "working-directory",
+				Aliases: []string{"w"},
+				Value:   "",
 			},
 		},
 		Action: runCmd,
@@ -56,11 +62,20 @@ Notice:
 }
 
 func runCmd(cCtx *cli.Context) error {
-	currentPath, err := os.Getwd()
-	errutil.ExitIfError(err)
+	var workPath string = cCtx.Path("working-directory")
+	if !path.IsAbs(workPath) {
+		cwd, err := os.Getwd()
+		errutil.ExitIfError(err)
+
+		if workPath == "" {
+			workPath = cwd
+		} else {
+			workPath = path.Join(cwd, workPath)
+		}
+	}
 
 	r := renamer.New(
-		currentPath,
+		workPath,
 		cCtx.Bool("directory"),
 		cCtx.Bool("directory-only"),
 		cCtx.Bool("all"),
