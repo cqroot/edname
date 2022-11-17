@@ -26,5 +26,5 @@ gen-testdata:
 	sh "$(CURDIR)/scripts/gen-testdata.sh"
 
 .PHONY: test
-test:
+test: gen-testdata
 	go test -v ./...

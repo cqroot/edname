@@ -1,17 +1,20 @@
 #!/usr/bin/env bash
 
-TESTBASE='./internal/renamer/testdata'
+SCRIPT_PATH=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
+PROJ_PATH=$(dirname "${SCRIPT_PATH}")
+TEST_DATA_PATH="${PROJ_PATH}/internal/renamer/testdata"
 
-mkdir -p ${TESTBASE}
+rm -rf ${TEST_DATA_PATH}
+mkdir -p ${TEST_DATA_PATH}
 
 touch \
-    ${TESTBASE}/.test_file_a \
-    ${TESTBASE}/.test_file_b \
-    ${TESTBASE}/test_file_a \
-    ${TESTBASE}/test_file_b
+	${TEST_DATA_PATH}/.test_file_a \
+	${TEST_DATA_PATH}/.test_file_b \
+	${TEST_DATA_PATH}/test_file_a \
+	${TEST_DATA_PATH}/test_file_b
 
 mkdir \
-    ${TESTBASE}/.test_dir_a \
-    ${TESTBASE}/.test_dir_b \
-    ${TESTBASE}/test_dir_a \
-    ${TESTBASE}/test_dir_b
+	${TEST_DATA_PATH}/.test_dir_a \
+	${TEST_DATA_PATH}/.test_dir_b \
+	${TEST_DATA_PATH}/test_dir_a \
+	${TEST_DATA_PATH}/test_dir_b
