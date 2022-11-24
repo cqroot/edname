@@ -23,7 +23,7 @@ uninstall:
 
 .PHONY: gen-testdata
 gen-testdata:
-	sh "$(CURDIR)/scripts/gen-testdata.sh"
+	bash "$(CURDIR)/scripts/gen-testdata.sh"
 
 .PHONY: test
 test: gen-testdata
