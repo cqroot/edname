@@ -42,7 +42,7 @@ func init() {
 	rootCmd.Flags().StringP("editor", "e", "", "")
 	rootCmd.Flags().StringVarP(&flagWorkingDirectory, "working-directory", "w", "", "")
 
-	viper.BindPFlag("editor", rootCmd.Flags().Lookup("editor"))
+	_ = viper.BindPFlag("editor", rootCmd.Flags().Lookup("editor"))
 	viper.SetDefault("editor", "vim")
 }
 
@@ -61,7 +61,7 @@ func InitConfig() {
 		viper.SetConfigFile(configFile)
 	}
 
-	viper.ReadInConfig()
+	_ = viper.ReadInConfig()
 }
 
 func RunRootCmd(cmd *cobra.Command, args []string) {
