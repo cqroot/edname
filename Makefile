@@ -1,4 +1,4 @@
-PROJ_NAME=vina
+PROJ_NAME=edname
 BUILD_DIR=$(CURDIR)/.build
 
 .PHONY: build

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/cqroot/vina/cmd"
+	"github.com/cqroot/edname/cmd"
 )
 
 func main() {

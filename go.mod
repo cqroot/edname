@@ -1,4 +1,4 @@
-module github.com/cqroot/vina
+module github.com/cqroot/edname
 
 go 1.19
 

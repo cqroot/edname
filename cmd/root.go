@@ -8,7 +8,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"github.com/cqroot/vina/internal/renamer"
+	"github.com/cqroot/edname/internal/renamer"
 )
 
 var (
@@ -20,7 +20,7 @@ var (
 	flagWorkingDirectory string
 
 	rootCmd = &cobra.Command{
-		Use:   "vina",
+		Use:   "edname",
 		Short: "Use your favorite editor to batch rename files and directories.",
 		Long: `Use your favorite editor to batch rename files and directories.
 
@@ -35,7 +35,7 @@ Notice:
 
 func init() {
 	rootCmd.Flags().BoolVarP(&flagAll, "all", "a", false, "do not ignore entries starting with .")
-	rootCmd.Flags().StringVarP(&flagConfig, "config", "c", "", "config file. default $HOME/.vina.yml")
+	rootCmd.Flags().StringVarP(&flagConfig, "config", "c", "", "config file. default $HOME/.config/edname/config.toml")
 	rootCmd.Flags().BoolVar(&flagDiff, "diff", false, "diff mode (only works when the editor is vim-like editor)")
 	rootCmd.Flags().BoolVarP(&flagDirectory, "directory", "d", false, "include directory")
 	rootCmd.Flags().BoolVarP(&flagDirectoryOnly, "directory-only", "D", false, "rename directory only")
@@ -56,7 +56,7 @@ func InitConfig() {
 		// Use config file from the flag.
 		viper.SetConfigFile(flagConfig)
 	} else {
-		configFile, err := xdg.ConfigFile("vina/config.toml")
+		configFile, err := xdg.ConfigFile("edname/config.toml")
 		cobra.CheckErr(err)
 		viper.SetConfigFile(configFile)
 	}

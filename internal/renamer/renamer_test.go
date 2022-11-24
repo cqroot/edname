@@ -4,7 +4,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"testing"
 
-	"github.com/cqroot/vina/internal/renamer"
+	"github.com/cqroot/edname/internal/renamer"
 )
 
 func TestRenamer_GenerateRenameItems(t *testing.T) {

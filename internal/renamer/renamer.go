@@ -8,9 +8,9 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/cqroot/goutil/errutil"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/jedib0t/go-pretty/v6/text"
-	"github.com/cqroot/goutil/errutil"
 )
 
 type RenamePair struct {
@@ -31,8 +31,8 @@ type Renamer struct {
 
 func New(path string, dirOpt bool, dirOnlyOpt bool, allOpt bool) *Renamer {
 	var opsId string = fmt.Sprintf("%d", time.Now().Unix())
-	var oldFile string = fmt.Sprintf("/tmp/vina-old-%s", opsId)
-	var newFile string = fmt.Sprintf("/tmp/vina-new-%s", opsId)
+	var oldFile string = fmt.Sprintf("/tmp/edname-old-%s", opsId)
+	var newFile string = fmt.Sprintf("/tmp/edname-new-%s", opsId)
 
 	return &Renamer{
 		NewFile:    newFile,
