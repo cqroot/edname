@@ -35,15 +35,26 @@ Notice:
 
 func init() {
 	rootCmd.Flags().BoolVarP(&flagAll, "all", "a", false, "do not ignore entries starting with .")
+	_ = viper.BindPFlag("include-all", rootCmd.Flags().Lookup("all"))
+	viper.SetDefault("include-all", false)
+
 	rootCmd.Flags().StringVarP(&flagConfig, "config", "c", "", "config file. default $HOME/.config/edname/config.toml")
 	rootCmd.Flags().BoolVar(&flagDiff, "diff", false, "diff mode (only works when the editor is vim-like editor)")
-	rootCmd.Flags().BoolVarP(&flagDirectory, "directory", "d", false, "include directory")
-	rootCmd.Flags().BoolVarP(&flagDirectoryOnly, "directory-only", "D", false, "rename directory only")
-	rootCmd.Flags().StringP("editor", "e", "", "")
-	rootCmd.Flags().StringVarP(&flagWorkingDirectory, "working-directory", "w", "", "")
 
+	rootCmd.Flags().BoolVarP(&flagDirectory, "directory", "d", false, "include directory")
+	_ = viper.BindPFlag("include-directory", rootCmd.Flags().Lookup("directory"))
+	viper.SetDefault("include-directory", false)
+
+	rootCmd.Flags().BoolVarP(&flagDirectoryOnly, "directory-only", "D", false, "rename directory only")
+	_ = viper.BindPFlag("include-directory-only", rootCmd.Flags().Lookup("directory-only"))
+	viper.SetDefault("include-directory-only", false)
+
+	rootCmd.Flags().StringP("editor", "e", "", "")
 	_ = viper.BindPFlag("editor", rootCmd.Flags().Lookup("editor"))
 	viper.SetDefault("editor", "vim")
+
+	rootCmd.Flags().StringVarP(&flagWorkingDirectory, "working-directory", "w", "", "")
+
 }
 
 func Execute() {
@@ -80,9 +91,9 @@ func RunRootCmd(cmd *cobra.Command, args []string) {
 
 	r := renamer.New(
 		flagWorkingDirectory,
-		flagDirectory,
-		flagDirectoryOnly,
-		flagAll,
+		viper.GetBool("include-directory"),
+		viper.GetBool("include-directory-only"),
+		viper.GetBool("include-all"),
 	)
 
 	r.CreateTmpFiles()

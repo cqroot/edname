@@ -1,1 +1,8 @@
 editor = "nvim"
+
+# do not ignore entries starting with .
+include-all = false
+
+include-directory = false
+
+include-directory-only = false
