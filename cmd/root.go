@@ -14,7 +14,6 @@ import (
 var (
 	flagAll              bool
 	flagConfig           string
-	flagDiff             bool
 	flagDirectory        bool
 	flagDirectoryOnly    bool
 	flagWorkingDirectory string
@@ -39,7 +38,6 @@ func init() {
 	viper.SetDefault("include-all", false)
 
 	rootCmd.Flags().StringVarP(&flagConfig, "config", "c", "", "config file. default $HOME/.config/edname/config.toml")
-	rootCmd.Flags().BoolVar(&flagDiff, "diff", false, "diff mode (only works when the editor is vim-like editor)")
 
 	rootCmd.Flags().BoolVarP(&flagDirectory, "directory", "d", false, "include directory")
 	_ = viper.BindPFlag("include-directory", rootCmd.Flags().Lookup("directory"))
