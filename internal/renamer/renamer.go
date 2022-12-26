@@ -95,9 +95,13 @@ func (r Renamer) Execute() error {
 		return err
 	}
 
-	r.RunEditor(tmp.Name())
+	if err := r.RunEditor(tmp.Name()); err != nil {
+		return err
+	}
 
-	tmp.Seek(0, 0)
+	if _, err := tmp.Seek(0, 0); err != nil {
+		return err
+	}
 	scanner := bufio.NewScanner(tmp)
 	scanner.Split(bufio.ScanLines)
 
@@ -117,14 +121,16 @@ func (r Renamer) Execute() error {
 
 	fmt.Printf("%+v\n", result)
 	if r.confirm(result) {
-		backend.Rename(result, func(old string, new string) {
+		if err := backend.Rename(result, func(old string, new string) {
 			fmt.Printf(
 				"%s %s %s\n",
 				old,
 				text.FgGreen.Sprint("->"),
 				new,
 			)
-		})
+		}); err != nil {
+			return err
+		}
 	}
 	return nil
 }

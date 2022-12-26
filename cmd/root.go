@@ -95,5 +95,6 @@ func RunRootCmd(cmd *cobra.Command, args []string) {
 		viper.GetBool("include-all"),
 	)
 
-	r.Execute()
+	err := r.Execute()
+	cobra.CheckErr(err)
 }
