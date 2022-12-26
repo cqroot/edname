@@ -5,10 +5,9 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"path/filepath"
-	"time"
+	"strings"
 
-	"github.com/cqroot/goutil/errutil"
+	"github.com/cqroot/edname/internal/file"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/jedib0t/go-pretty/v6/text"
 )
@@ -19,24 +18,16 @@ type RenamePair struct {
 }
 
 type Renamer struct {
-	OldFile string
-	NewFile string
-
-	Path string
-
+	Editor     string
+	Path       string
 	DirOpt     bool
 	DirOnlyOpt bool
 	AllOpt     bool
 }
 
-func New(path string, dirOpt bool, dirOnlyOpt bool, allOpt bool) *Renamer {
-	var opsId string = fmt.Sprintf("%d", time.Now().Unix())
-	var oldFile string = fmt.Sprintf("/tmp/edname-old-%s", opsId)
-	var newFile string = fmt.Sprintf("/tmp/edname-new-%s", opsId)
-
+func New(editor string, path string, dirOpt bool, dirOnlyOpt bool, allOpt bool) *Renamer {
 	return &Renamer{
-		NewFile:    newFile,
-		OldFile:    oldFile,
+		Editor:     editor,
 		Path:       path,
 		DirOpt:     dirOpt,
 		DirOnlyOpt: dirOnlyOpt,
@@ -44,13 +35,19 @@ func New(path string, dirOpt bool, dirOnlyOpt bool, allOpt bool) *Renamer {
 	}
 }
 
-func (r Renamer) GenerateRenameItems(ch chan<- string) {
+func (r Renamer) GenerateRenameItems() ([]string, error) {
 	entries, err := os.ReadDir(r.Path)
-	errutil.ExitIfError(err)
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]string, 0)
 
 	for _, entry := range entries {
 		info, err := entry.Info()
-		errutil.ExitIfError(err)
+		if err != nil {
+			return nil, err
+		}
 
 		if !r.AllOpt && info.Name()[0] == '.' {
 			continue
@@ -66,134 +63,107 @@ func (r Renamer) GenerateRenameItems(ch chan<- string) {
 			}
 		}
 
-		ch <- info.Name()
+		result = append(result, info.Name())
 	}
 
-	close(ch)
+	return result, nil
 }
 
-func (r Renamer) CreateTmpFiles() {
-	fOld, err := os.OpenFile(r.OldFile, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0444)
-	errutil.ExitIfError(err)
-	defer fOld.Close()
-
-	fNew, err := os.Create(r.NewFile)
-	errutil.ExitIfError(err)
-	defer fNew.Close()
-
-	chItems := make(chan string)
-	go r.GenerateRenameItems(chItems)
-
-	for file := range chItems {
-		_, err = fOld.WriteString(file)
-		errutil.LogIfError(err)
-		_, err = fOld.WriteString("\n")
-		errutil.LogIfError(err)
-
-		_, err = fNew.WriteString(file)
-		errutil.LogIfError(err)
-		_, err = fNew.WriteString("\n")
-		errutil.LogIfError(err)
+func (r Renamer) Execute() error {
+	backend := file.Backend{
+		Path:       r.Path,
+		DirOpt:     r.DirOpt,
+		DirOnlyOpt: r.DirOnlyOpt,
+		AllOpt:     r.AllOpt,
+	}
+	items, err := backend.Generate()
+	if err != nil {
+		return err
 	}
 
-	errutil.LogIfError(fOld.Sync())
-	errutil.LogIfError(fNew.Sync())
-}
+	tmp, err := os.CreateTemp("", "edname-")
+	if err != nil {
+		return err
+	}
+	defer os.Remove(tmp.Name())
 
-func (r Renamer) RemoveTmpFiles() {
-	errutil.LogIfError(os.Remove(r.OldFile))
-	errutil.LogIfError(os.Remove(r.NewFile))
-}
-
-func (r Renamer) RunEditor(editor string) {
-	var args []string = []string{
-		r.NewFile,
+	if _, err = tmp.WriteString(strings.Join(items, "\n")); err != nil {
+		return err
 	}
 
-	edcmd := exec.Command(editor, args...)
-	edcmd.Stdin = os.Stdin
-	edcmd.Stdout = os.Stdout
-	err := edcmd.Run()
-	errutil.LogIfError(err)
-}
-
-func (r Renamer) RunEditorDiff(editor string) {
-	var args []string = []string{
-		"-d", r.OldFile, r.NewFile,
-		"-c", "wincmd l",
-		"-c", "foldopen",
-		"-c", "autocmd BufEnter * if winnr(\"$\") == 1 | execute \"normal! :q!\\<CR>\" | endif",
+	if err := tmp.Sync(); err != nil {
+		return err
 	}
 
-	edcmd := exec.Command(editor, args...)
-	edcmd.Stdin = os.Stdin
-	edcmd.Stdout = os.Stdout
-	err := edcmd.Run()
-	errutil.ExitIfError(err)
-}
+	r.RunEditor(tmp.Name())
 
-func (r Renamer) GenerateRenamePairs() []RenamePair {
-	fOld, err := os.Open(r.OldFile)
-	errutil.ExitIfError(err)
-	oldScanner := bufio.NewScanner(fOld)
-	oldScanner.Split(bufio.ScanLines)
+	tmp.Seek(0, 0)
+	scanner := bufio.NewScanner(tmp)
+	scanner.Split(bufio.ScanLines)
 
-	fNew, err := os.Open(r.NewFile)
-	errutil.ExitIfError(err)
-	newScanner := bufio.NewScanner(fNew)
-	newScanner.Split(bufio.ScanLines)
-
-	var renamePairs []RenamePair = make([]RenamePair, 0)
-	for oldScanner.Scan() && newScanner.Scan() {
-		oldName := oldScanner.Text()
-		newName := newScanner.Text()
-		if oldName == newName {
+	idx := 0
+	result := make([][]string, 0)
+	for scanner.Scan() {
+		newItem := scanner.Text()
+		if newItem == items[idx] {
+			idx += 1
 			continue
 		}
 
-		renamePairs = append(renamePairs, RenamePair{
-			OldName: oldName,
-			NewName: newName,
-		})
+		pair := []string{items[idx], newItem}
+		result = append(result, pair)
+		idx += 1
 	}
 
-	return renamePairs
+	fmt.Printf("%+v\n", result)
+	if r.confirm(result) {
+		backend.Rename(result, func(old string, new string) {
+			fmt.Printf(
+				"%s %s %s\n",
+				old,
+				text.FgGreen.Sprint("->"),
+				new,
+			)
+		})
+	}
+	return nil
 }
 
-func (r Renamer) StartRename(renamePairs []RenamePair) {
+func (r Renamer) RunEditor(file string) error {
+	var args []string = []string{
+		file,
+	}
+
+	edcmd := exec.Command(r.Editor, args...)
+	edcmd.Stdin = os.Stdin
+	edcmd.Stdout = os.Stdout
+	err := edcmd.Run()
+	return err
+}
+
+func (r Renamer) confirm(renamePairs [][]string) bool {
 	if len(renamePairs) == 0 {
-		return
+		return false
 	}
 
 	t := table.NewWriter()
 	t.SetOutputMirror(os.Stdout)
 	t.AppendHeader(table.Row{"#", "Old Name", "New Name"})
 	for idx, pair := range renamePairs {
-		t.AppendRow(table.Row{idx, pair.OldName, pair.NewName})
+		t.AppendRow(table.Row{idx, pair[0], pair[1]})
 	}
 	t.Render()
 
 	fmt.Print("Confirm to rename the above file [y/N] ")
 	cfmReader := bufio.NewReader(os.Stdin)
 	cfmText, err := cfmReader.ReadString('\n')
-	errutil.ExitIfError(err)
+	if err != nil {
+		return false
+	}
 
 	if cfmText != "y\n" && cfmText != "Y\n" {
-		return
+		return false
 	}
 
-	for idx, pair := range renamePairs {
-		fmt.Printf(
-			"%s %s %s %s\n",
-			text.FgGreen.Sprintf("%d:", idx),
-			pair.OldName,
-			text.FgGreen.Sprint("->"),
-			pair.NewName,
-		)
-		err := os.Rename(
-			filepath.Join(r.Path, pair.OldName),
-			filepath.Join(r.Path, pair.NewName),
-		)
-		errutil.ExitIfError(err)
-	}
+	return true
 }

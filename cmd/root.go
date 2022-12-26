@@ -90,22 +90,12 @@ func RunRootCmd(cmd *cobra.Command, args []string) {
 	}
 
 	r := renamer.New(
+		viper.GetString("editor"),
 		flagWorkingDirectory,
 		viper.GetBool("include-directory"),
 		viper.GetBool("include-directory-only"),
 		viper.GetBool("include-all"),
 	)
 
-	r.CreateTmpFiles()
-	defer r.RemoveTmpFiles()
-
-	if flagDiff {
-		r.RunEditorDiff(viper.GetString("editor"))
-	} else {
-		r.RunEditor(viper.GetString("editor"))
-	}
-
-	renamePairs := r.GenerateRenamePairs()
-
-	r.StartRename(renamePairs)
+	r.Execute()
 }
