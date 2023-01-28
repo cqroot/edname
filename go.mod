@@ -3,6 +3,7 @@ module github.com/cqroot/edname
 go 1.19
 
 require (
+	github.com/cqroot/ediff v0.0.0-20230128035657-712676363cdd
 	github.com/jedib0t/go-pretty/v6 v6.4.4
 	github.com/spf13/cobra v1.6.1
 	github.com/stretchr/testify v1.8.1

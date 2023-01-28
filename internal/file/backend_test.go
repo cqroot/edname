@@ -10,12 +10,12 @@ import (
 
 func TestGenerate(t *testing.T) {
 	tfunc := func(t *testing.T, expect []string, dirOpt bool, dirOnlyOpt bool, allOpt bool) {
-		b := file.Backend{
-			Path:       "./testdata",
-			DirOpt:     dirOpt,
-			DirOnlyOpt: dirOnlyOpt,
-			AllOpt:     allOpt,
-		}
+		b := file.New(
+			"./testdata",
+			dirOpt,
+			dirOnlyOpt,
+			allOpt,
+		)
 		actual, err := b.Generate()
 		if err != nil {
 			t.Fatal(err)

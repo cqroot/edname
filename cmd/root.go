@@ -6,7 +6,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/cqroot/edname/internal/renamer"
+	"github.com/cqroot/edname/internal/app"
 )
 
 var (
@@ -57,14 +57,12 @@ func RunRootCmd(cmd *cobra.Command, args []string) {
 		}
 	}
 
-	r := renamer.New(
+	err := app.Run(
 		flagEditor,
 		flagWorkingDirectory,
 		flagDirectory,
 		flagDirectoryOnly,
 		flagAll,
 	)
-
-	err := r.Execute()
 	cobra.CheckErr(err)
 }

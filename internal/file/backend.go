@@ -6,14 +6,23 @@ import (
 )
 
 type Backend struct {
-	Path       string
-	DirOpt     bool
-	DirOnlyOpt bool
-	AllOpt     bool
+	path       string
+	dirOpt     bool
+	dirOnlyOpt bool
+	allOpt     bool
+}
+
+func New(path string, dirOpt bool, dirOnlyOpt bool, allOpt bool) *Backend {
+	return &Backend{
+		path:       path,
+		dirOpt:     dirOpt,
+		dirOnlyOpt: dirOnlyOpt,
+		allOpt:     allOpt,
+	}
 }
 
 func (b Backend) Generate() ([]string, error) {
-	entries, err := os.ReadDir(b.Path)
+	entries, err := os.ReadDir(b.path)
 	if err != nil {
 		return nil, err
 	}
@@ -26,15 +35,15 @@ func (b Backend) Generate() ([]string, error) {
 			return nil, err
 		}
 
-		if !b.AllOpt && info.Name()[0] == '.' {
+		if !b.allOpt && info.Name()[0] == '.' {
 			continue
 		}
 
-		if b.DirOnlyOpt {
+		if b.dirOnlyOpt {
 			if !info.IsDir() {
 				continue
 			}
-		} else if !b.DirOpt {
+		} else if !b.dirOpt {
 			if info.IsDir() {
 				continue
 			}
@@ -46,16 +55,14 @@ func (b Backend) Generate() ([]string, error) {
 	return result, nil
 }
 
-func (b Backend) Rename(namePairs [][]string, finishFunc func(string, string)) error {
-	for _, names := range namePairs {
-		err := os.Rename(
-			filepath.Join(b.Path, names[0]),
-			filepath.Join(b.Path, names[1]),
-		)
-		if err != nil {
-			return err
-		}
-		finishFunc(names[0], names[1])
+func (b Backend) Rename(prev string, curr string) error {
+	err := os.Rename(
+		filepath.Join(b.path, prev),
+		filepath.Join(b.path, curr),
+	)
+	if err != nil {
+		return err
 	}
+
 	return nil
 }
