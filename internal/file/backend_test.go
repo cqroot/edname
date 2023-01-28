@@ -3,7 +3,7 @@ package file_test
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/cqroot/edname/internal/file"
 )
@@ -20,7 +20,7 @@ func TestGenerate(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, expect, actual)
+		require.Equal(t, expect, actual)
 	}
 
 	tfunc(t, []string{
