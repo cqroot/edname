@@ -57,6 +57,15 @@ func RunRootCmd(cmd *cobra.Command, args []string) {
 		}
 	}
 
+    if flagEditor == "" {
+        envEditor := os.Getenv("EDITOR")
+        if envEditor != "" {
+            flagEditor = envEditor
+        } else {
+            flagEditor = "vim"
+        }
+    }
+
 	err := app.Run(
 		flagEditor,
 		flagWorkingDirectory,
