@@ -1,9 +1,12 @@
 package app
 
 import (
+	"bufio"
 	"fmt"
+	"os"
 
 	"github.com/cqroot/ediff"
+	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/jedib0t/go-pretty/v6/text"
 
 	"github.com/cqroot/edname/internal/file"
@@ -25,6 +28,20 @@ func Run(editor string, path string, dirOpt bool, dirOnlyOpt bool, allOpt bool) 
 		return err
 	}
 
+	PrintPairs(pairs)
+
+	fmt.Print("Confirm to rename the above file [y/N] ")
+	cfmReader := bufio.NewReader(os.Stdin)
+	cfmText, err := cfmReader.ReadString('\n')
+	if err != nil {
+		return err
+	}
+
+	if cfmText != "y\n" && cfmText != "Y\n" {
+		return nil
+	}
+	fmt.Println()
+
 	for _, pair := range pairs {
 		err := backend.Rename(pair.Prev, pair.Curr)
 		if err != nil {
@@ -40,4 +57,15 @@ func Run(editor string, path string, dirOpt bool, dirOnlyOpt bool, allOpt bool) 
 	}
 
 	return err
+}
+
+func PrintPairs(pairs []ediff.DiffPair) {
+	t := table.NewWriter()
+	t.SetStyle(table.StyleLight)
+	t.SetOutputMirror(os.Stdout)
+	t.AppendHeader(table.Row{"#", "Old Name", "New Name"})
+	for idx, pair := range pairs {
+		t.AppendRow(table.Row{idx, pair.Prev, pair.Curr})
+	}
+	t.Render()
 }
