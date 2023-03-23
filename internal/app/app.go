@@ -27,6 +27,10 @@ func Run(editor string, path string, dirOpt bool, dirOnlyOpt bool, allOpt bool) 
 		return err
 	}
 
+	if len(pairs) == 0 {
+		return nil
+	}
+
 	PrintPairs(pairs)
 
 	fmt.Print("Confirm to rename the above file [y/N] ")
@@ -60,7 +64,7 @@ func Run(editor string, path string, dirOpt bool, dirOnlyOpt bool, allOpt bool) 
 
 func PrintPairs(pairs []ediff.DiffPair) {
 	t := table.NewWriter()
-	t.SetStyle(table.StyleLight)
+	t.SetStyle(table.StyleRounded)
 	t.SetOutputMirror(os.Stdout)
 	t.AppendHeader(table.Row{"#", "Old Name", "New Name"})
 	for idx, pair := range pairs {
