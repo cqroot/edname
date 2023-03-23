@@ -43,5 +43,10 @@ jobs:
       - name: Format check
         run: gofumpt -l .
 
-      - name: Test
+      - name: Go Test
         run: make test
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          flags: ${{ matrix.platform }}
