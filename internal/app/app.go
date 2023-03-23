@@ -5,11 +5,10 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/cqroot/ediff"
+	"github.com/cqroot/edname/internal/ediff"
+	"github.com/cqroot/edname/internal/file"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/jedib0t/go-pretty/v6/text"
-
-	"github.com/cqroot/edname/internal/file"
 )
 
 type App struct{}
