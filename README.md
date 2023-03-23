@@ -1,4 +1,30 @@
 <div align="center">
+  <h1>Edname</h1>
+  <p><i>Use your favorite <b>editor</b> to batch <b>rename</b> files and directories.</i></p>
+
+  <p>
+    <a href="https://github.com/cqroot/edname/actions">
+      <img src="https://github.com/cqroot/edname/workflows/test/badge.svg" alt="Action Status" />
+    </a>
+    <a href="https://codecov.io/gh/cqroot/edname">
+      <img src="https://codecov.io/gh/cqroot/edname/branch/main/graph/badge.svg" alt="Codecov" />
+    </a>
+    <a href="https://goreportcard.com/report/github.com/cqroot/edname">
+      <img src="https://goreportcard.com/badge/github.com/cqroot/edname" alt="Go Report Card" />
+    </a>
+    <a href="https://github.com/cqroot/edname/tags">
+      <img src="https://img.shields.io/github/v/tag/cqroot/edname" alt="Git tag" />
+    </a>
+    <a href="https://github.com/cqroot/edname/blob/main/LICENSE">
+      <img src="https://img.shields.io/github/license/cqroot/edname" />
+    </a>
+    <a href="https://github.com/cqroot/edname/issues">
+      <img src="https://img.shields.io/github/issues/cqroot/edname" />
+    </a>
+  </p>
+</div>
+
+<div align="center">
   <p>
     <img src="https://placehold.co/500x150/3d4070/fff?font=montserrat&text=EdName" alt="EdName" />
   </p>

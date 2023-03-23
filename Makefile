@@ -8,7 +8,11 @@ gen-testdata:
 
 .PHONY: test
 test: gen-testdata
-	go test -v ./...
+	go test -v -covermode=count -coverprofile=coverage.out ./...
+
+.PHONY: cover
+cover: test
+	go tool cover -html=coverage.out
 
 .PHONY: check
 check:
