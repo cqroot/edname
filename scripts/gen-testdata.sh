@@ -2,7 +2,7 @@
 
 SCRIPT_PATH=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 PROJ_PATH=$(dirname "${SCRIPT_PATH}")
-TEST_DATA_PATH="${PROJ_PATH}/internal/file/testdata"
+TEST_DATA_PATH="${PROJ_PATH}/internal/renamer/testdata"
 
 rm -rf ${TEST_DATA_PATH}
 mkdir -p ${TEST_DATA_PATH}
