@@ -8,8 +8,8 @@ import (
 	"github.com/cqroot/edname/internal/generator"
 )
 
-func testGenerate(t *testing.T, expect []string, opt generator.GenerateOpt) {
-	r := generator.New(opt)
+func testGenerate(t *testing.T, expect []string, shouldContainDir, shouldOnlyContainDir, shouldContainDotFiles bool) {
+	r := generator.New("./testdata", shouldContainDir, shouldOnlyContainDir, shouldContainDotFiles)
 
 	actual, err := r.Generate()
 	require.Nil(t, err)
@@ -21,58 +21,43 @@ func TestGenerate(t *testing.T) {
 	testGenerate(t, []string{
 		"test_file_a",
 		"test_file_b",
-	}, generator.GenerateOpt{
-		WorkDir:               "./testdata",
-		ShouldContainDir:      false,
-		ShouldOnlyContainDir:  false,
-		ShouldContainDotFiles: false,
-	})
+	},
+		false, false, false,
+	)
 
 	testGenerate(t, []string{
 		"test_dir_a",
 		"test_dir_b",
 		"test_file_a",
 		"test_file_b",
-	}, generator.GenerateOpt{
-		WorkDir:               "./testdata",
-		ShouldContainDir:      true,
-		ShouldOnlyContainDir:  false,
-		ShouldContainDotFiles: false,
-	})
+	},
+		true, false, false,
+	)
 
 	testGenerate(t, []string{
 		"test_dir_a",
 		"test_dir_b",
-	}, generator.GenerateOpt{
-		WorkDir:               "./testdata",
-		ShouldContainDir:      false,
-		ShouldOnlyContainDir:  true,
-		ShouldContainDotFiles: false,
-	})
+	},
+		false, true, false,
+	)
 
 	testGenerate(t, []string{
 		".test_file_a",
 		".test_file_b",
 		"test_file_a",
 		"test_file_b",
-	}, generator.GenerateOpt{
-		WorkDir:               "./testdata",
-		ShouldContainDir:      false,
-		ShouldOnlyContainDir:  false,
-		ShouldContainDotFiles: true,
-	})
+	},
+		false, false, true,
+	)
 
 	testGenerate(t, []string{
 		".test_dir_a",
 		".test_dir_b",
 		"test_dir_a",
 		"test_dir_b",
-	}, generator.GenerateOpt{
-		WorkDir:               "./testdata",
-		ShouldContainDir:      false,
-		ShouldOnlyContainDir:  true,
-		ShouldContainDotFiles: true,
-	})
+	},
+		false, true, true,
+	)
 
 	testGenerate(t, []string{
 		".test_dir_a",
@@ -83,32 +68,23 @@ func TestGenerate(t *testing.T) {
 		"test_dir_b",
 		"test_file_a",
 		"test_file_b",
-	}, generator.GenerateOpt{
-		WorkDir:               "./testdata",
-		ShouldContainDir:      true,
-		ShouldOnlyContainDir:  false,
-		ShouldContainDotFiles: true,
-	})
+	},
+		true, false, true,
+	)
 
 	testGenerate(t, []string{
 		"test_dir_a",
 		"test_dir_b",
-	}, generator.GenerateOpt{
-		WorkDir:               "./testdata",
-		ShouldContainDir:      true,
-		ShouldOnlyContainDir:  true,
-		ShouldContainDotFiles: false,
-	})
+	},
+		true, true, false,
+	)
 
 	testGenerate(t, []string{
 		".test_dir_a",
 		".test_dir_b",
 		"test_dir_a",
 		"test_dir_b",
-	}, generator.GenerateOpt{
-		WorkDir:               "./testdata",
-		ShouldContainDir:      true,
-		ShouldOnlyContainDir:  true,
-		ShouldContainDotFiles: true,
-	})
+	},
+		true, true, true,
+	)
 }

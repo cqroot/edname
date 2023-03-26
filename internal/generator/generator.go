@@ -4,25 +4,24 @@ import (
 	"os"
 )
 
-type GenerateOpt struct {
-	WorkDir               string
-	ShouldContainDir      bool
-	ShouldOnlyContainDir  bool
-	ShouldContainDotFiles bool
-}
-
 type Generater struct {
-	opt GenerateOpt
+	workDir               string
+	shouldContainDir      bool
+	shouldOnlyContainDir  bool
+	shouldContainDotFiles bool
 }
 
-func New(opt GenerateOpt) *Generater {
+func New(workDir string, shouldContainDir, shouldOnlyContainDir, shouldContainDotFiles bool) *Generater {
 	return &Generater{
-		opt: opt,
+		workDir:               workDir,
+		shouldContainDir:      shouldContainDir,
+		shouldOnlyContainDir:  shouldOnlyContainDir,
+		shouldContainDotFiles: shouldContainDotFiles,
 	}
 }
 
 func (r Generater) Generate() ([]string, error) {
-	entries, err := os.ReadDir(r.opt.WorkDir)
+	entries, err := os.ReadDir(r.workDir)
 	if err != nil {
 		return nil, err
 	}
@@ -35,15 +34,15 @@ func (r Generater) Generate() ([]string, error) {
 			return nil, err
 		}
 
-		if !r.opt.ShouldContainDotFiles && info.Name()[0] == '.' {
+		if !r.shouldContainDotFiles && info.Name()[0] == '.' {
 			continue
 		}
 
-		if r.opt.ShouldOnlyContainDir {
+		if r.shouldOnlyContainDir {
 			if !info.IsDir() {
 				continue
 			}
-		} else if !r.opt.ShouldContainDir {
+		} else if !r.shouldContainDir {
 			if info.IsDir() {
 				continue
 			}

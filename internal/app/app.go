@@ -15,12 +15,7 @@ import (
 type App struct{}
 
 func Run(editor string, path string, dirOpt bool, dirOnlyOpt bool, allOpt bool) error {
-	g := generator.New(generator.GenerateOpt{
-		WorkDir:               path,
-		ShouldContainDir:      dirOpt,
-		ShouldOnlyContainDir:  dirOnlyOpt,
-		ShouldContainDotFiles: allOpt,
-	})
+	g := generator.New(path, dirOpt, dirOnlyOpt, allOpt)
 	e := executor.New(path)
 
 	items, err := g.Generate()
