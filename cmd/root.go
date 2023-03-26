@@ -2,11 +2,10 @@ package cmd
 
 import (
 	"os"
-	"path"
-
-	"github.com/spf13/cobra"
+	"path/filepath"
 
 	"github.com/cqroot/edname/internal/app"
+	"github.com/spf13/cobra"
 )
 
 var (
@@ -46,27 +45,23 @@ func Execute() {
 }
 
 func RunRootCmd(cmd *cobra.Command, args []string) {
-	if !path.IsAbs(flagWorkingDirectory) {
-		cwd, err := os.Getwd()
-		cobra.CheckErr(err)
+	var err error
 
-		if flagWorkingDirectory == "" {
-			flagWorkingDirectory = cwd
+	if !filepath.IsAbs(flagWorkingDirectory) {
+		flagWorkingDirectory, err = filepath.Abs(flagWorkingDirectory)
+		cobra.CheckErr(err)
+	}
+
+	if flagEditor == "" {
+		envEditor := os.Getenv("EDITOR")
+		if envEditor != "" {
+			flagEditor = envEditor
 		} else {
-			flagWorkingDirectory = path.Join(cwd, flagWorkingDirectory)
+			flagEditor = "vim"
 		}
 	}
 
-    if flagEditor == "" {
-        envEditor := os.Getenv("EDITOR")
-        if envEditor != "" {
-            flagEditor = envEditor
-        } else {
-            flagEditor = "vim"
-        }
-    }
-
-	err := app.Run(
+	err = app.Run(
 		flagEditor,
 		flagWorkingDirectory,
 		flagDirectory,

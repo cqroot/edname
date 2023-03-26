@@ -6,7 +6,8 @@ import (
 	"os"
 
 	"github.com/cqroot/edname/internal/ediff"
-	"github.com/cqroot/edname/internal/renamer"
+	"github.com/cqroot/edname/internal/executor"
+	"github.com/cqroot/edname/internal/generator"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/jedib0t/go-pretty/v6/text"
 )
@@ -14,17 +15,15 @@ import (
 type App struct{}
 
 func Run(editor string, path string, dirOpt bool, dirOnlyOpt bool, allOpt bool) error {
-	r, err := renamer.New(renamer.RenameOpt{
-		WorkDir:              path,
-		ShouldRenameDir:      dirOpt,
-		ShouldOnlyRenameDir:  dirOnlyOpt,
-		ShouldRenameDotFiles: allOpt,
+	g := generator.New(generator.GenerateOpt{
+		WorkDir:               path,
+		ShouldContainDir:      dirOpt,
+		ShouldOnlyContainDir:  dirOnlyOpt,
+		ShouldContainDotFiles: allOpt,
 	})
-	if err != nil {
-		return err
-	}
+	e := executor.New(path)
 
-	items, err := r.Generate()
+	items, err := g.Generate()
 	if err != nil {
 		return err
 	}
@@ -55,7 +54,7 @@ func Run(editor string, path string, dirOpt bool, dirOnlyOpt bool, allOpt bool) 
 	fmt.Println()
 
 	for _, pair := range pairs {
-		err := r.Rename(pair.Prev, pair.Curr)
+		err := e.Rename(pair.Prev, pair.Curr)
 		if err != nil {
 			return err
 		}
