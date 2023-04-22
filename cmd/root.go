@@ -9,15 +9,15 @@ import (
 )
 
 var (
-	flagAll              bool
-	flagConfig           string
-	flagDirectory        bool
-	flagDirectoryOnly    bool
-	flagEditor           string
-	flagWorkingDirectory string
+	flagAll           bool
+	flagConfig        string
+	flagDirectory     bool
+	flagDirectoryOnly bool
+	flagEditor        string
 
 	rootCmd = &cobra.Command{
 		Use:   "edname",
+		Args:  cobra.MatchAll(cobra.RangeArgs(0, 1), cobra.OnlyValidArgs),
 		Short: "Use your favorite editor to batch rename files and directories.",
 		Long: `Use your favorite editor to batch rename files and directories.
 
@@ -36,7 +36,6 @@ func init() {
 	rootCmd.Flags().BoolVarP(&flagDirectory, "directory", "d", false, "include directory")
 	rootCmd.Flags().BoolVarP(&flagDirectoryOnly, "directory-only", "D", false, "rename directory only")
 	rootCmd.Flags().StringVarP(&flagEditor, "editor", "e", "", "")
-	rootCmd.Flags().StringVarP(&flagWorkingDirectory, "working-directory", "w", "", "")
 }
 
 func Execute() {
@@ -47,8 +46,13 @@ func Execute() {
 func RunRootCmd(cmd *cobra.Command, args []string) {
 	var err error
 
-	if !filepath.IsAbs(flagWorkingDirectory) {
-		flagWorkingDirectory, err = filepath.Abs(flagWorkingDirectory)
+	wd := ""
+	if len(args) == 1 {
+		wd = args[0]
+	}
+
+	if !filepath.IsAbs(wd) {
+		wd, err = filepath.Abs(wd)
 		cobra.CheckErr(err)
 	}
 
@@ -63,7 +67,7 @@ func RunRootCmd(cmd *cobra.Command, args []string) {
 
 	err = app.Run(
 		flagEditor,
-		flagWorkingDirectory,
+		wd,
 		flagDirectory,
 		flagDirectoryOnly,
 		flagAll,
