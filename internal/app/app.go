@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/cqroot/edname/internal/ediff"
 	"github.com/cqroot/edname/internal/executor"
@@ -43,7 +44,13 @@ func Run(editor string, path string, dirOpt bool, dirOnlyOpt bool, allOpt bool) 
 		return err
 	}
 
-	if cfmText != "y\n" && cfmText != "Y\n" {
+	cfmText = strings.Map(func(r rune) rune {
+		if r == '\n' || r == '\r' || r == ' ' {
+			return -1
+		}
+		return r
+	}, cfmText)
+	if strings.ToLower(cfmText) != "y" {
 		return nil
 	}
 	fmt.Println()
