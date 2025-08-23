@@ -12,7 +12,6 @@ import (
 
 var (
 	flagAll           bool
-	flagConfig        string
 	flagDirectory     bool
 	flagDirectoryOnly bool
 	flagEditor        string
@@ -23,8 +22,6 @@ var (
 		Short: "Use your favorite editor to batch rename files and directories.",
 		Long: `Use your favorite editor to batch rename files and directories.
 
-Originally designed for vim, but not just vim.
-
 Notice:
 1. Do not add or subtract lines.
 2. Unchanged lines are ignored.`,
@@ -34,8 +31,6 @@ Notice:
 
 func init() {
 	rootCmd.Flags().BoolVarP(&flagAll, "all", "a", false, "do not ignore entries starting with .")
-	rootCmd.Flags().
-		StringVarP(&flagConfig, "config", "c", "", "config file. default $HOME/.config/edname/config.toml")
 	rootCmd.Flags().BoolVarP(&flagDirectory, "directory", "d", false, "include directory")
 	rootCmd.Flags().
 		BoolVarP(&flagDirectoryOnly, "directory-only", "D", false, "rename directory only")

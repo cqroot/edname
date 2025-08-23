@@ -24,28 +24,76 @@
   </p>
 </div>
 
-# Features
+## Features
 
-- Batch rename files and directories with your favorite editor.
+- Edit filenames in a familiar text editor environment.
+- Preview changes with colored diffs before applying.
+- Support for including or excluding directories and dotfiles.
 
-# Installation
+## Installation
 
-## From source
+### From source
+
+To install `edname` from source, ensure you have Go installed and run:
 
 ```bash
 go install github.com/cqroot/edname@latest
 ```
 
-# Usage
+## Usage
 
 Execute the following command in the directory where you need to rename the files:
 
 ```bash
-edname
+edname [directory]
 ```
 
-This command will open an editor (`vim` by default) with a buffer listing the files in the current directory.
+This command will open an editor (`$EDITOR` or `vim`) with a buffer listing the files in the current directory.
 
-Change the file name in the buffer, and then exit.
+Change the file name in the buffer, save, and exit.
 
-Note that do not change the number of lines and do not adjust the order.
+Note that **do not change the number of lines and do not adjust the order**.
+
+### Flags
+
+- `-a, --all`: Include entries starting with '.' (dotfiles).
+- `-d, --directory`: Include directories.
+- `-D, --directory-only`: Rename directories only.
+- `-e, --editor`: Specify the editor to use (overrides `$EDITOR`).
+
+### Examples
+
+1. Include directories and dotfiles:
+
+   ```bash
+   edname -a -d ~/target_directory
+   ```
+
+2. Use a specific editor:
+
+   ```bash
+   edname -e nano
+   ```
+
+3. Rename directories only:
+   ```bash
+   edname -D
+   ```
+
+## Development
+
+### Running Tests
+
+To run tests, use:
+
+```bash
+make test
+```
+
+## Contributing
+
+Contributions are welcome! Feel free to open an issue to report a bug, suggest a new feature, or submit a pull request.
+
+## License
+
+This project is open source and available under the [MIT License](LICENSE).
