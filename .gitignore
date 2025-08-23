@@ -1,3 +1,4 @@
-.build/
+/.build/
+/coverage.out
+/dist/
 testdata/
-coverage.out
