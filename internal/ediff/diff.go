@@ -79,6 +79,10 @@ func (e Ediff) Run() ([]DiffPair, error) {
 	idx := 0
 	pairs := make([]DiffPair, 0)
 	for scanner.Scan() {
+		if idx >= len(e.items) {
+			return nil, ErrDifferentItemCount
+		}
+
 		newItem := scanner.Text()
 		if newItem == e.items[idx] {
 			idx += 1

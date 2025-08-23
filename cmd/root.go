@@ -1,10 +1,12 @@
 package cmd
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 
 	"github.com/cqroot/edname/internal/app"
+	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 )
 
@@ -40,9 +42,20 @@ func init() {
 	rootCmd.Flags().StringVarP(&flagEditor, "editor", "e", "", "")
 }
 
+func CheckErr(err error) {
+	if err != nil {
+		fmt.Fprintln(
+			os.Stderr,
+			color.New(color.BgHiRed, color.FgHiBlack).Sprintf("Error:"),
+			err,
+		)
+		os.Exit(1)
+	}
+}
+
 func Execute() {
 	err := rootCmd.Execute()
-	cobra.CheckErr(err)
+	CheckErr(err)
 }
 
 func RunRootCmd(cmd *cobra.Command, args []string) {
@@ -55,7 +68,7 @@ func RunRootCmd(cmd *cobra.Command, args []string) {
 
 	if !filepath.IsAbs(wd) {
 		wd, err = filepath.Abs(wd)
-		cobra.CheckErr(err)
+		CheckErr(err)
 	}
 
 	if flagEditor == "" {
@@ -74,5 +87,5 @@ func RunRootCmd(cmd *cobra.Command, args []string) {
 		flagDirectoryOnly,
 		flagAll,
 	)
-	cobra.CheckErr(err)
+	CheckErr(err)
 }

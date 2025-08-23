@@ -2,4 +2,4 @@ package ediff
 
 import "errors"
 
-var ErrDifferentItemCount = errors.New("changed the number of elements after modification")
+var ErrDifferentItemCount = errors.New("change the number of elements after modification")
