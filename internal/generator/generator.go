@@ -11,7 +11,10 @@ type Generater struct {
 	shouldContainDotFiles bool
 }
 
-func New(workDir string, shouldContainDir, shouldOnlyContainDir, shouldContainDotFiles bool) *Generater {
+func New(
+	workDir string,
+	shouldContainDir, shouldOnlyContainDir, shouldContainDotFiles bool,
+) *Generater {
 	return &Generater{
 		workDir:               workDir,
 		shouldContainDir:      shouldContainDir,

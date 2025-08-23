@@ -32,9 +32,11 @@ Notice:
 
 func init() {
 	rootCmd.Flags().BoolVarP(&flagAll, "all", "a", false, "do not ignore entries starting with .")
-	rootCmd.Flags().StringVarP(&flagConfig, "config", "c", "", "config file. default $HOME/.config/edname/config.toml")
+	rootCmd.Flags().
+		StringVarP(&flagConfig, "config", "c", "", "config file. default $HOME/.config/edname/config.toml")
 	rootCmd.Flags().BoolVarP(&flagDirectory, "directory", "d", false, "include directory")
-	rootCmd.Flags().BoolVarP(&flagDirectoryOnly, "directory-only", "D", false, "rename directory only")
+	rootCmd.Flags().
+		BoolVarP(&flagDirectoryOnly, "directory-only", "D", false, "rename directory only")
 	rootCmd.Flags().StringVarP(&flagEditor, "editor", "e", "", "")
 }
 

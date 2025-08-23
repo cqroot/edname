@@ -8,7 +8,11 @@ import (
 	"github.com/cqroot/edname/internal/generator"
 )
 
-func testGenerate(t *testing.T, expect []string, shouldContainDir, shouldOnlyContainDir, shouldContainDotFiles bool) {
+func testGenerate(
+	t *testing.T,
+	expect []string,
+	shouldContainDir, shouldOnlyContainDir, shouldContainDotFiles bool,
+) {
 	r := generator.New("./testdata", shouldContainDir, shouldOnlyContainDir, shouldContainDotFiles)
 
 	actual, err := r.Generate()
