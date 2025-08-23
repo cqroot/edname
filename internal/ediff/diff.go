@@ -45,10 +45,10 @@ func (e Ediff) createTemp() (string, error) {
 
 	// Write items to temp file
 	if _, err = tmp.WriteString(strings.Join(e.items, "\n")); err != nil {
-		return "", fmt.Errorf("create temp file: %w", err)
+		return "", fmt.Errorf("write temp file: %w", err)
 	}
 	if err := tmp.Sync(); err != nil {
-		return "", fmt.Errorf("create temp file: %w", err)
+		return "", fmt.Errorf("sync temp file: %w", err)
 	}
 
 	return tmp.Name(), nil

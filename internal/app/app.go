@@ -9,8 +9,10 @@ import (
 	"github.com/cqroot/edname/internal/ediff"
 	"github.com/cqroot/edname/internal/executor"
 	"github.com/cqroot/edname/internal/generator"
+	"github.com/fatih/color"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/jedib0t/go-pretty/v6/text"
+	"github.com/sergi/go-diff/diffmatchpatch"
 )
 
 type App struct{}
@@ -72,13 +74,35 @@ func Run(editor string, path string, dirOpt bool, dirOnlyOpt bool, allOpt bool) 
 	return err
 }
 
+func GetColoredDiffs(diffs []diffmatchpatch.Diff) (string, string) {
+	var sbOld, sbNew strings.Builder
+
+	for _, d := range diffs {
+		switch d.Type {
+		case diffmatchpatch.DiffEqual:
+			sbOld.WriteString(d.Text)
+			sbNew.WriteString(d.Text)
+		case diffmatchpatch.DiffDelete:
+			sbOld.WriteString(color.RedString(d.Text))
+		case diffmatchpatch.DiffInsert:
+			sbNew.WriteString(color.GreenString(d.Text))
+		}
+	}
+
+	return sbOld.String(), sbNew.String()
+}
+
 func PrintPairs(pairs []ediff.DiffPair) {
+	dmp := diffmatchpatch.New()
+
 	t := table.NewWriter()
 	t.SetStyle(table.StyleRounded)
 	t.SetOutputMirror(os.Stdout)
 	t.AppendHeader(table.Row{"#", "Old Name", "New Name"})
 	for idx, pair := range pairs {
-		t.AppendRow(table.Row{idx, pair.Prev, pair.Curr})
+		diffs := dmp.DiffMain(pair.Prev, pair.Curr, false)
+		sOld, sNew := GetColoredDiffs(diffs)
+		t.AppendRow(table.Row{idx, sOld, sNew})
 	}
 	t.Render()
 }
