@@ -45,6 +45,8 @@ changelog:
       - "^docs:"
       - "^test:"
       - "^ci:"
+      - "^refactor:"
+      - "^build:"
 
 release:
   footer: >-
