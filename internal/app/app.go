@@ -4,14 +4,13 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/cqroot/edname/internal/ediff"
-	"github.com/cqroot/edname/internal/executor"
 	"github.com/cqroot/edname/internal/generator"
 	"github.com/fatih/color"
 	"github.com/jedib0t/go-pretty/v6/table"
-	"github.com/jedib0t/go-pretty/v6/text"
 	"github.com/sergi/go-diff/diffmatchpatch"
 )
 
@@ -19,7 +18,6 @@ type App struct{}
 
 func Run(editor string, path string, dirOpt bool, dirOnlyOpt bool, allOpt bool) error {
 	g := generator.New(path, dirOpt, dirOnlyOpt, allOpt)
-	e := executor.New(path)
 
 	items, err := g.Generate()
 	if err != nil {
@@ -58,19 +56,16 @@ func Run(editor string, path string, dirOpt bool, dirOnlyOpt bool, allOpt bool) 
 	fmt.Println()
 
 	for _, pair := range pairs {
-		err := e.Rename(pair.Prev, pair.Curr)
+		err := os.Rename(
+			filepath.Join(path, pair.Prev),
+			filepath.Join(path, pair.Curr),
+		)
 		if err != nil {
 			return err
 		}
-
-		fmt.Printf(
-			"%s %s %s\n",
-			pair.Prev,
-			text.FgGreen.Sprint("->"),
-			pair.Curr,
-		)
 	}
 
+	fmt.Printf("%d items have been renamed.\n", len(pairs))
 	return err
 }
 

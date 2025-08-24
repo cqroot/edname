@@ -41,7 +41,7 @@ func (e Ediff) createTemp() (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("create temp file: %w", err)
 	}
-	defer tmp.Close()
+	defer tmp.Close() //nolint:errcheck
 
 	// Write items to temp file
 	if _, err = tmp.WriteString(strings.Join(e.items, "\n")); err != nil {
@@ -59,7 +59,7 @@ func (e Ediff) Run() ([]DiffPair, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer os.Remove(tmpName)
+	defer os.Remove(tmpName) //nolint:errcheck
 
 	// Run editor
 	if err := e.runEditor(tmpName); err != nil {
@@ -71,7 +71,7 @@ func (e Ediff) Run() ([]DiffPair, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer tmp.Close()
+	defer tmp.Close() //nolint:errcheck
 
 	scanner := bufio.NewScanner(tmp)
 	scanner.Split(bufio.ScanLines)
