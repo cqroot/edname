@@ -2,3 +2,6 @@
 /coverage.out
 /dist/
 testdata/
+
+/edname.cast
+/scripts/dir/

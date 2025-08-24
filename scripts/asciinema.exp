@@ -1,0 +1,51 @@
+#!/usr/bin/expect -f
+
+proc send_slowly {string {delay 150}} {
+    set length [string length $string]
+    for {set i 0} {$i < $length} {incr i} {
+        set char [string index $string $i]
+        send -- "$char"
+        after $delay
+    }
+}
+
+set timeout 30
+
+spawn asciinema rec ../../edname.cast
+sleep 2
+
+send_slowly "ls -l"
+send_slowly "\r"
+sleep 1
+
+send_slowly "edname"
+sleep 1
+send_slowly "\r"
+sleep 1
+
+send_slowly "\026"
+sleep 1
+send_slowly "jjjI___"
+send_slowly "\033"
+sleep 1
+
+send_slowly "Vjjj:s/testfile/ttt\r" 200
+sleep 1
+
+send_slowly ":wq"
+sleep 1
+send_slowly "\r"
+sleep 2
+
+send "y"
+sleep 1
+send "\r"
+sleep 1
+
+send_slowly "ls -l"
+send_slowly "\r"
+sleep 2
+
+send_slowly "\004"
+expect eof
+

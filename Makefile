@@ -21,3 +21,7 @@ check:
 	@echo
 	@echo '******************************'
 	gofumpt -l .
+
+.PHONY: screenshot
+screenshot:
+	bash "$(CURDIR)/scripts/screenshot.bash"

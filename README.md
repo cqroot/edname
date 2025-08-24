@@ -22,6 +22,7 @@
       <img src="https://img.shields.io/github/issues/cqroot/edname" />
     </a>
   </p>
+  <a href="https://asciinema.org/a/Qvu4iQnaue2jyPitWWuCevinB" target="_blank"><img src="https://asciinema.org/a/Qvu4iQnaue2jyPitWWuCevinB.svg" /></a>
 </div>
 
 ## Features
